@@ -1,0 +1,12 @@
+{
+  "name": "pwdgen",
+  "version": "1.0.0",
+  "description": "Deterministic password generator — same inputs always produce the same passwords",
+  "scripts": {
+    "build": "npx esbuild index.ts --bundle --outfile=node.js --platform=node --target=node18"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,22 @@
+fileignoreconfig:
+- filename: README.md
+  checksum: 57cd7e6a06daa778b66a4e0bd0ffbfc53a52906b41a7adbc02311e7f2578089d
+- filename: generate-pass.ts
+  checksum: f662c5449c226d2f2558fac016564c2f17ecae0151b688ef7bf7028e70d4ffde
+- filename: getpwds.js
+  checksum: 854dbe41b001bdcfb441f7278e7da679da80f51d654847126c0aa95144a6f3cd
+- filename: getpwds.sh
+  checksum: 6e660aaa4bbae8ee8c6215a30b0d1ddc5881f06e7989dcd7bb20891cc871696c
+- filename: index.html
+  checksum: 9765ac00401c8df609f822069609767599f29fb17d8dc827b4a39d71e0dd09e9
+- filename: index.ts
+  checksum: 0c6383a03ac71411e9ba7d79db2705b676fee322ffe596f1fb46a0a3e7ceba9e
+- filename: package-lock.json
+  checksum: 6ed830ed1903fb816c50508f14cc80c89da675f748b94dbcf01e227381828526
+- filename: pwd.ts
+  checksum: 1b1d72155ff244cb29065ced6041bb2878efeaa0ba4abafe85da42a81c124668
+- filename: style-guide.md
+  checksum: 8d6d122e2de951d04e1b901cbb09a65514cb80a49096dafdd6a42900116f74e5
+- filename: summary.md
+  checksum: 0ef1a3d58698c171708088d2f0ffa70be188cd54e37d2bd24e9f9565c19d9c62
+version: "1.0"
