@@ -5,15 +5,20 @@
 	import VendorDropdown from '$lib/components/VendorDropdown.svelte';
 	import AdvancedOptions from '$lib/components/AdvancedOptions.svelte';
 	import ResultsPanel from '$lib/components/ResultsPanel.svelte';
+	import ShareModal from '$lib/components/ShareModal.svelte';
+	import ImportBanner from '$lib/components/ImportBanner.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { generatePasswords, type AlgorithmMode } from '$lib/crypto/passwordDerivation';
 	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
+	import { detectImportFragment } from '$lib/crypto/configShare';
 
 	let algorithmMode = $state<AlgorithmMode>('legacy');
 	let generatedPasswords = $state<string[]>([]);
 	let isGenerating = $state(false);
 	let generationError = $state<string | null>(null);
+	let showShareModal = $state(false);
+	let pendingImportFragment = $state<string | null>(browser ? detectImportFragment() : null);
 
 	$effect(() => {
 		if (browser && passphraseStore.confirmed && passphraseStore.configKey) {
@@ -77,6 +82,14 @@
 		}
 	}
 
+	function handleImported() {
+		pendingImportFragment = null;
+		passphraseStore.reset();
+		configStore.reset();
+		generatedPasswords = [];
+		generationError = null;
+	}
+
 	async function handleCopyAtIndex(index: number) {
 		if (!activeVendor || !passphraseStore.configKey) return;
 		await configStore.updateVendorSettings(
@@ -95,8 +108,27 @@
 			</div>
 			<span class="brand-text">pwdgen<em> · deterministic</em></span>
 		</div>
-		<ThemeToggle />
+		<div class="header-actions">
+			<button
+				type="button"
+				class="share-btn"
+				title="Share / export config"
+				onclick={() => (showShareModal = true)}
+			>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+				Share
+			</button>
+			<ThemeToggle />
+		</div>
 	</header>
+
+	{#if pendingImportFragment}
+		<ImportBanner
+			encoded={pendingImportFragment}
+			onImported={handleImported}
+			onDismiss={() => (pendingImportFragment = null)}
+		/>
+	{/if}
 
 	<div class="card-body">
 		<section class="form-panel">
@@ -140,6 +172,10 @@
 	</div>
 </div>
 
+{#if showShareModal}
+	<ShareModal onClose={() => (showShareModal = false)} />
+{/if}
+
 <style>
 	.card {
 		width: 100%;
@@ -161,6 +197,33 @@
 		justify-content: space-between;
 		padding: 16px 28px;
 		border-bottom: 1px solid var(--border);
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.share-btn {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		font-family: 'Manrope', system-ui, sans-serif;
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--muted);
+		background: none;
+		border: 1.5px solid var(--border);
+		border-radius: 8px;
+		padding: 5px 11px;
+		cursor: pointer;
+		transition: color 0.12s, border-color 0.12s;
+	}
+
+	.share-btn:hover {
+		color: var(--accent);
+		border-color: var(--accent);
 	}
 
 	.brand {

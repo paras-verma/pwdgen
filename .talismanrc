@@ -12,7 +12,7 @@ fileignoreconfig:
 - filename: index.ts
   checksum: 0c6383a03ac71411e9ba7d79db2705b676fee322ffe596f1fb46a0a3e7ceba9e
 - filename: package-lock.json
-  checksum: fcbdd26ce28baf9f6ad95d896d868c7fe90d27ff81b3bc7aa2f0cbf002a87d3b
+  checksum: 777a90961ef7b7336143e31f6980ee63dd442dc1339935cf4f96191f10f338bd
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
@@ -39,6 +39,10 @@ fileignoreconfig:
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
   checksum: 6d0606f41564608acd59d38733de2cab4d33dd847fb89a52efd21401bed9338a
+- filename: src/lib/crypto/configShare.ts
+  checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
+- filename: src/lib/components/ShareModal.svelte
+  checksum: 574f807d18b181ec8996b928b53025ea25e7117b8719968f9437c20d7c17cf28
 - filename: src/lib/components/AdvancedOptions.svelte
   checksum: 0eb8e838a2e9006b04b8d91b541c90fa5f5384b129dc1e5ffa8daa3e9971910e
 - filename: src/lib/components/DeleteVendorModal.svelte
