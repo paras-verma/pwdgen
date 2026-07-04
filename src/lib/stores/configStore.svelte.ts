@@ -72,6 +72,23 @@ function createConfigStore() {
 		);
 	}
 
+	async function upsertVendor(name: string, settings: VendorSettings, configKey: CryptoKey) {
+		const trimmedName = name.trim();
+		if (!trimmedName) return;
+
+		await saveVendor(trimmedName, settings, configKey);
+
+		const updatedEntry: Vendor = { name: trimmedName, locked: false, ...settings };
+		const existingIndex = vendors.findIndex((v) => v.name === trimmedName);
+
+		if (existingIndex >= 0) {
+			vendors = vendors.map((v, i) => (i === existingIndex ? updatedEntry : v));
+		} else {
+			vendors = [...vendors, updatedEntry];
+			selectedVendorName = trimmedName;
+		}
+	}
+
 	function selectVendor(name: string) {
 		selectedVendorName = name;
 	}
@@ -98,6 +115,7 @@ function createConfigStore() {
 		addVendor,
 		removeVendor,
 		updateVendorSettings,
+		upsertVendor,
 		selectVendor,
 		reset
 	};

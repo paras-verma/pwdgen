@@ -19,6 +19,8 @@ fileignoreconfig:
   checksum: e17e7d1f1e8f63193cdb91efc6c2feabd1f82c362e27fd3a6c6f280dd7261bb0
 - filename: .gitignore
   checksum: 755de56b3622291b869eb30baddb3c5cef77936bd60d2f50e6d05b74d1258655
+- filename: .talismanrc
+  checksum: ded678fb5df24315e47ad5a053bf0dea223542683ab3f1ad643b2cb8f1f0bfb7
 - filename: svelte.config.js
   checksum: 57261cf5d47cb20d7ec0cb8184bfb8257f5a6bb0bd1b9a14d48fc5d7b69e309d
 - filename: tsconfig.cli.json
@@ -36,7 +38,7 @@ fileignoreconfig:
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
-  checksum: ad180bef6d8c20492d74b7cebd89a0330524c1ba61c3e6975d5e603f951c2adf
+  checksum: 6d0606f41564608acd59d38733de2cab4d33dd847fb89a52efd21401bed9338a
 - filename: src/lib/components/AdvancedOptions.svelte
   checksum: 0eb8e838a2e9006b04b8d91b541c90fa5f5384b129dc1e5ffa8daa3e9971910e
 - filename: src/lib/components/DeleteVendorModal.svelte
@@ -52,7 +54,7 @@ fileignoreconfig:
 - filename: src/lib/components/ThemeToggle.svelte
   checksum: 8ba3050b3aa377765d172dcb17d4789d98f439709341b15e161314ef2a0b4d16
 - filename: src/lib/components/VendorDropdown.svelte
-  checksum: ba5f4e163777be6cc30dbcb803f6aa03d31f0d681955544b5265fd31a6db01f3
+  checksum: d19189e4d5c6669ad1cf57be5dee47a6246a95cc763a4ff79ea0ed9c6b1c8498
 - filename: src/lib/crypto/configStorage.test.ts
   checksum: 1726815d9e43dec6db81772fdfa02c93bd4e081bae25e6787e29f1212fbc700a
 - filename: src/lib/crypto/configStorage.ts
@@ -60,7 +62,7 @@ fileignoreconfig:
 - filename: src/lib/crypto/passwordDerivation.ts
   checksum: dd1727e459ace847d3c9fc866c6c26ab2cc7da11effc6ce100ace811bbb48501
 - filename: src/lib/stores/configStore.svelte.ts
-  checksum: b1afa0304d228d2c3a6f5a95ae25b968c8097f67ac81e8e86be6c14f5551cd2e
+  checksum: c124231684997dc031cb31cd7008fcee8f512ee9b6be4e26d6ecd6dd7a2a3f95
 - filename: src/lib/stores/passphraseStore.svelte.ts
   checksum: 5d53cec77edce0005f4779d5538f34648c0d3efcadcda3a7d3503e212f7de0d5
 - filename: src/lib/stores/themeStore.svelte.ts

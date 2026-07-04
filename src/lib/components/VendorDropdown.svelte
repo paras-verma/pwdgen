@@ -1,23 +1,67 @@
 <script lang="ts">
 	import { configStore } from '$lib/stores/configStore.svelte';
-	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import DeleteVendorModal from './DeleteVendorModal.svelte';
 
-	let addingNew = $state(false);
-	let newVendorName = $state('');
-	let vendorPendingDelete = $state<string | null>(null);
-
-	async function submitNewVendor() {
-		const trimmed = newVendorName.trim();
-		if (!trimmed || !passphraseStore.configKey) return;
-		await configStore.addVendor(trimmed, passphraseStore.configKey);
-		newVendorName = '';
-		addingNew = false;
+	interface Props {
+		configKey: CryptoKey | null;
 	}
 
-	function cancelNew() {
-		newVendorName = '';
-		addingNew = false;
+	let { configKey }: Props = $props();
+
+	let inputValue = $state(configStore.selectedVendorName ?? '');
+	let dropdownOpen = $state(false);
+	let vendorPendingDelete = $state<string | null>(null);
+
+	const filteredVendors = $derived(
+		inputValue.trim().length === 0
+			? configStore.vendors
+			: configStore.vendors.filter((v) =>
+					v.name.toLowerCase().includes(inputValue.toLowerCase())
+				)
+	);
+
+	const isNewVendorName = $derived(
+		inputValue.trim().length > 0 &&
+		!configStore.vendors.some((v) => v.name === inputValue.trim())
+	);
+
+	$effect(() => {
+		inputValue = configStore.selectedVendorName ?? '';
+	});
+
+	function handleSelect(name: string) {
+		configStore.selectVendor(name);
+		inputValue = name;
+		dropdownOpen = false;
+	}
+
+	async function handleAddNew() {
+		const trimmed = inputValue.trim();
+		if (!trimmed) return;
+		if (configKey) {
+			await configStore.addVendor(trimmed, configKey);
+		}
+		configStore.selectVendor(trimmed);
+		dropdownOpen = false;
+	}
+
+	function handleBlur() {
+		setTimeout(() => {
+			dropdownOpen = false;
+		}, 150);
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter') {
+			if (isNewVendorName) {
+				handleAddNew();
+			} else if (filteredVendors.length === 1) {
+				handleSelect(filteredVendors[0].name);
+			}
+		}
+		if (e.key === 'Escape') {
+			dropdownOpen = false;
+		}
 	}
 
 	async function confirmDelete() {
@@ -25,76 +69,80 @@
 		await configStore.removeVendor(vendorPendingDelete);
 		vendorPendingDelete = null;
 	}
+
+	export function currentVendorName(): string {
+		return inputValue.trim();
+	}
 </script>
 
 <div class="vendor-section">
-	<label class="vendor-label" for="vendorSelect">Vendor</label>
-
-	{#if addingNew}
-		<div class="new-vendor-row">
+	<label class="vendor-label" for="vendorInput">Vendor</label>
+	<div class="vendor-row">
+		<div class="combobox">
 			<input
-				id="vendorSelect"
+				id="vendorInput"
 				type="text"
 				class="vendor-input"
 				placeholder="e.g. github"
 				autocomplete="off"
 				spellcheck="false"
-				bind:value={newVendorName}
-				onkeydown={(e) => {
-					if (e.key === 'Enter') submitNewVendor();
-					if (e.key === 'Escape') cancelNew();
-				}}
+				bind:value={inputValue}
+				onfocus={() => (dropdownOpen = true)}
+				onblur={handleBlur}
+				onkeydown={handleKeydown}
+				oninput={() => (dropdownOpen = true)}
 			/>
-			<button type="button" class="action-btn confirm" aria-label="Save vendor" onclick={submitNewVendor} disabled={!newVendorName.trim()}>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-			</button>
-			<button type="button" class="action-btn cancel" aria-label="Cancel" onclick={cancelNew}>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-			</button>
-		</div>
-	{:else}
-		<div class="select-row">
-			<select
-				id="vendorSelect"
-				class="vendor-select"
-				value={configStore.selectedVendorName}
-				onchange={(e) => {
-					const val = (e.target as HTMLSelectElement).value;
-					if (val === '__add__') {
-						addingNew = true;
-					} else {
-						configStore.selectVendor(val);
-					}
-				}}
-			>
-				{#if configStore.vendors.length === 0}
-					<option value="" disabled selected>No vendors yet</option>
-				{/if}
-				{#each configStore.vendors as vendor}
-					<option value={vendor.name}>
-						{vendor.name}{vendor.locked ? ' 🔒' : ''}
-					</option>
-				{/each}
-				<option value="__add__">+ Add new vendor</option>
-			</select>
 
-			{#if configStore.selectedVendorName}
-				<button
-					type="button"
-					class="action-btn delete"
-					title="Delete vendor"
-					onclick={() => (vendorPendingDelete = configStore.selectedVendorName)}
-				>
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-				</button>
+			{#if dropdownOpen && (filteredVendors.length > 0 || isNewVendorName)}
+				<div class="dropdown" role="listbox">
+					{#each filteredVendors as vendor}
+						<button
+							type="button"
+							class="dropdown-item"
+							class:locked={vendor.locked}
+							role="option"
+							aria-selected={vendor.name === configStore.selectedVendorName}
+							onmousedown={() => handleSelect(vendor.name)}
+						>
+							<span class="item-name">{vendor.name}</span>
+							{#if vendor.locked}
+								<svg class="lock-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+							{/if}
+						</button>
+					{/each}
+
+					{#if isNewVendorName}
+						<button
+							type="button"
+							class="dropdown-item add-new"
+							role="option"
+							aria-selected={false}
+							onmousedown={handleAddNew}
+						>
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+							Add "{inputValue.trim()}"
+						</button>
+					{/if}
+				</div>
 			{/if}
 		</div>
-	{/if}
+
+		{#if configStore.selectedVendorName}
+			<button
+				type="button"
+				class="delete-btn"
+				title="Delete vendor"
+				onclick={() => (vendorPendingDelete = configStore.selectedVendorName)}
+			>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+			</button>
+		{/if}
+	</div>
 
 	{#if configStore.selectedVendor?.locked}
-		<p class="locked-hint" title="This vendor's settings were saved with a different passphrase">
-			<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-			Settings locked — saved with a different passphrase
+		<p class="locked-hint" title="Saved with a different passphrase — generate to overwrite with current passphrase">
+			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+			Saved with a different passphrase
 		</p>
 	{/if}
 </div>
@@ -115,31 +163,34 @@
 	}
 
 	.vendor-label {
+		display: block;
 		font-size: 12px;
 		font-weight: 700;
 		color: var(--ink-2);
 	}
 
-	.select-row,
-	.new-vendor-row {
+	.vendor-row {
 		display: flex;
 		gap: 6px;
-		align-items: center;
+		align-items: flex-start;
 	}
 
-	.vendor-select,
-	.vendor-input {
+	.combobox {
+		position: relative;
 		flex: 1;
+	}
+
+	.vendor-input {
+		width: 100%;
 		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14px;
+		font-size: 14.5px;
 		font-weight: 500;
 		color: var(--ink);
 		background: var(--surface);
 		border: 1.5px solid var(--border);
 		border-radius: 10px;
-		padding: 9px 13px;
+		padding: 10px 13px;
 		outline: none;
-		cursor: pointer;
 		transition:
 			border-color 0.15s,
 			box-shadow 0.15s;
@@ -147,61 +198,98 @@
 		appearance: none;
 	}
 
-	.vendor-select {
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238792a2' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-		background-repeat: no-repeat;
-		background-position: right 12px center;
-		padding-right: 32px;
-	}
-
-	.vendor-select:focus,
-	.vendor-input:focus {
-		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-dim);
-		cursor: auto;
-	}
-
 	.vendor-input::placeholder {
 		color: var(--muted);
 		font-weight: 400;
 	}
 
-	.action-btn {
-		width: 34px;
-		height: 34px;
+	.vendor-input:focus {
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px var(--accent-dim);
+	}
+
+	.dropdown {
+		position: absolute;
+		top: calc(100% + 4px);
+		left: 0;
+		right: 0;
+		background: var(--surface);
+		border: 1.5px solid var(--border);
+		border-radius: 10px;
+		box-shadow: var(--shadow-card);
+		z-index: 50;
+		overflow: hidden;
+		max-height: 220px;
+		overflow-y: auto;
+	}
+
+	.dropdown-item {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		padding: 9px 13px;
+		background: none;
+		border: none;
+		font-family: 'Manrope', system-ui, sans-serif;
+		font-size: 13.5px;
+		font-weight: 500;
+		color: var(--ink);
+		cursor: pointer;
+		text-align: left;
+		transition: background 0.1s;
+	}
+
+	.dropdown-item:hover,
+	.dropdown-item[aria-selected='true'] {
+		background: var(--accent-dim);
+	}
+
+	.dropdown-item.locked {
+		color: var(--muted);
+	}
+
+	.dropdown-item.add-new {
+		color: var(--accent);
+		gap: 7px;
+		font-weight: 600;
+		border-top: 1px solid var(--border-soft);
+	}
+
+	.item-name {
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.lock-icon {
+		flex-shrink: 0;
+		color: var(--muted);
+	}
+
+	.delete-btn {
+		width: 40px;
+		height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		background: none;
 		border: 1.5px solid var(--border);
-		border-radius: 9px;
-		background: var(--surface);
+		border-radius: 10px;
 		color: var(--muted);
 		cursor: pointer;
 		flex-shrink: 0;
 		transition:
 			color 0.12s,
-			background 0.12s,
-			border-color 0.12s;
+			border-color 0.12s,
+			background 0.12s;
 	}
 
-	.action-btn:hover {
-		color: var(--ink-2);
-		background: var(--surface-alt);
-	}
-
-	.action-btn.confirm:not(:disabled) {
-		color: var(--green);
-		border-color: var(--green);
-	}
-
-	.action-btn.delete:hover {
+	.delete-btn:hover {
 		color: var(--red);
 		border-color: var(--red);
-	}
-
-	.action-btn:disabled {
-		opacity: 0.4;
-		cursor: default;
 	}
 
 	.locked-hint {

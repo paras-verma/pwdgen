@@ -8,6 +8,7 @@
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { generatePasswords, type AlgorithmMode } from '$lib/crypto/passwordDerivation';
+	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 
 	let algorithmMode = $state<AlgorithmMode>('legacy');
 	let generatedPasswords = $state<string[]>([]);
@@ -37,12 +38,23 @@
 	const canGenerate = $derived(
 		passphraseStore.confirmed &&
 		!!configStore.selectedVendorName &&
-		!configStore.selectedVendor?.locked &&
 		!isGenerating
 	);
 
 	async function handleGenerate() {
-		if (!canGenerate || !activeVendor) return;
+		const vendorName = configStore.selectedVendorName;
+		if (!passphraseStore.confirmed || !passphraseStore.configKey || !vendorName || isGenerating) return;
+
+		const existingVendor = configStore.selectedVendor;
+		const settings: VendorSettings =
+			existingVendor && !existingVendor.locked
+				? {
+						count: existingVendor.count,
+						length: existingVendor.length,
+						disallowedChars: existingVendor.disallowedChars,
+						lastCopiedIndex: existingVendor.lastCopiedIndex
+					}
+				: { ...DEFAULT_VENDOR_SETTINGS };
 
 		isGenerating = true;
 		generationError = null;
@@ -50,13 +62,14 @@
 
 		try {
 			generatedPasswords = await generatePasswords(
-				activeVendor.name,
+				vendorName,
 				passphraseStore.passphrase,
-				activeVendor.count,
-				activeVendor.length,
-				activeVendor.disallowedChars,
+				settings.count,
+				settings.length,
+				settings.disallowedChars,
 				algorithmMode
 			);
+			await configStore.upsertVendor(vendorName, settings, passphraseStore.configKey);
 		} catch (error) {
 			generationError = error instanceof Error ? error.message : 'Generation failed';
 		} finally {
@@ -94,6 +107,13 @@
 			<PassphraseForm />
 
 			{#if passphraseStore.confirmed}
+				<div class="vendor-advanced">
+					<VendorDropdown configKey={passphraseStore.configKey} />
+					<AdvancedOptions
+						{algorithmMode}
+						onAlgorithmModeChange={(mode) => (algorithmMode = mode)}
+					/>
+				</div>
 				<button
 					type="button"
 					class="generate-btn"
@@ -106,19 +126,8 @@
 		</section>
 
 		<section class="results-panel" class:loading={isGenerating} aria-live="polite">
-			{#if passphraseStore.confirmed}
-				<div class="results-top">
-					<VendorDropdown />
-					<AdvancedOptions
-						{algorithmMode}
-						onAlgorithmModeChange={(mode) => (algorithmMode = mode)}
-					/>
-				</div>
-				<div class="panel-divider"></div>
-			{:else}
-				<span class="panel-label">Results</span>
-				<div class="panel-divider"></div>
-			{/if}
+			<span class="panel-label">Results</span>
+			<div class="panel-divider"></div>
 
 			<ResultsPanel
 				passwords={generatedPasswords}
@@ -227,10 +236,17 @@
 		margin-bottom: 28px;
 	}
 
+	.vendor-advanced {
+		margin-top: 24px;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
 	.generate-btn {
 		display: block;
 		width: 100%;
-		margin-top: 24px;
+		margin-top: 16px;
 		font-family: 'Manrope', system-ui, sans-serif;
 		font-size: 14.5px;
 		font-weight: 700;
@@ -274,12 +290,6 @@
 		transition:
 			background 0.25s,
 			border-color 0.25s;
-	}
-
-	.results-top {
-		display: flex;
-		flex-direction: column;
-		gap: 0;
 	}
 
 	.panel-label {
