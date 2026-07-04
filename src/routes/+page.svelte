@@ -1,0 +1,363 @@
+<script lang="ts">
+	import { browser } from '$app/environment';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
+	import PassphraseForm from '$lib/components/PassphraseForm.svelte';
+	import VendorDropdown from '$lib/components/VendorDropdown.svelte';
+	import AdvancedOptions from '$lib/components/AdvancedOptions.svelte';
+	import ResultsPanel from '$lib/components/ResultsPanel.svelte';
+	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
+	import { configStore } from '$lib/stores/configStore.svelte';
+	import { generatePasswords, type AlgorithmMode } from '$lib/crypto/passwordDerivation';
+
+	let algorithmMode = $state<AlgorithmMode>('legacy');
+	let generatedPasswords = $state<string[]>([]);
+	let isGenerating = $state(false);
+	let generationError = $state<string | null>(null);
+
+	$effect(() => {
+		if (browser && passphraseStore.confirmed && passphraseStore.configKey) {
+			configStore.loadFromStorage(passphraseStore.configKey);
+		}
+	});
+
+	$effect(() => {
+		if (!passphraseStore.confirmed) {
+			configStore.reset();
+			generatedPasswords = [];
+			generationError = null;
+		}
+	});
+
+	const activeVendor = $derived(
+		configStore.selectedVendor && !configStore.selectedVendor.locked
+			? configStore.selectedVendor
+			: null
+	);
+
+	const canGenerate = $derived(
+		passphraseStore.confirmed &&
+		!!configStore.selectedVendorName &&
+		!configStore.selectedVendor?.locked &&
+		!isGenerating
+	);
+
+	async function handleGenerate() {
+		if (!canGenerate || !activeVendor) return;
+
+		isGenerating = true;
+		generationError = null;
+		generatedPasswords = [];
+
+		try {
+			generatedPasswords = await generatePasswords(
+				activeVendor.name,
+				passphraseStore.passphrase,
+				activeVendor.count,
+				activeVendor.length,
+				activeVendor.disallowedChars,
+				algorithmMode
+			);
+		} catch (error) {
+			generationError = error instanceof Error ? error.message : 'Generation failed';
+		} finally {
+			isGenerating = false;
+		}
+	}
+
+	async function handleCopyAtIndex(index: number) {
+		if (!activeVendor || !passphraseStore.configKey) return;
+		await configStore.updateVendorSettings(
+			activeVendor.name,
+			{ lastCopiedIndex: index },
+			passphraseStore.configKey
+		);
+	}
+</script>
+
+<div class="card">
+	<header class="card-header">
+		<div class="brand">
+			<div class="brand-icon">
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+			</div>
+			<span class="brand-text">pwdgen<em> · deterministic</em></span>
+		</div>
+		<ThemeToggle />
+	</header>
+
+	<div class="card-body">
+		<section class="form-panel">
+			<p class="form-eyebrow">Generator</p>
+			<h1 class="form-title">Derive passwords<br />from a passphrase</h1>
+			<p class="form-lede">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
+
+			<PassphraseForm />
+
+			{#if passphraseStore.confirmed}
+				<button
+					type="button"
+					class="generate-btn"
+					disabled={!canGenerate}
+					onclick={handleGenerate}
+				>
+					{isGenerating ? 'Generating…' : 'Generate passwords'}
+				</button>
+			{/if}
+		</section>
+
+		<section class="results-panel" class:loading={isGenerating} aria-live="polite">
+			{#if passphraseStore.confirmed}
+				<div class="results-top">
+					<VendorDropdown />
+					<AdvancedOptions
+						{algorithmMode}
+						onAlgorithmModeChange={(mode) => (algorithmMode = mode)}
+					/>
+				</div>
+				<div class="panel-divider"></div>
+			{:else}
+				<span class="panel-label">Results</span>
+				<div class="panel-divider"></div>
+			{/if}
+
+			<ResultsPanel
+				passwords={generatedPasswords}
+				{isGenerating}
+				errorMessage={generationError}
+				lastCopiedIndex={activeVendor?.lastCopiedIndex ?? null}
+				onCopy={handleCopyAtIndex}
+			/>
+		</section>
+	</div>
+</div>
+
+<style>
+	.card {
+		width: 100%;
+		max-width: 920px;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 22px;
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+		transition:
+			background 0.25s,
+			border-color 0.25s,
+			box-shadow 0.25s;
+	}
+
+	.card-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 16px 28px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.brand-icon {
+		width: 26px;
+		height: 26px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--accent-dim);
+		border-radius: 7px;
+		color: var(--accent);
+	}
+
+	.brand-text {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--ink-2);
+		letter-spacing: 0.03em;
+	}
+
+	.brand-text em {
+		font-style: normal;
+		color: var(--muted);
+		font-weight: 400;
+	}
+
+	.card-body {
+		display: grid;
+		grid-template-columns: 7fr 5fr;
+		min-height: 520px;
+	}
+
+	.form-panel {
+		order: 1;
+		padding: 40px 44px;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		border-right: 1px solid var(--border);
+	}
+
+	.form-eyebrow {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.16em;
+		color: var(--accent);
+		margin-bottom: 10px;
+	}
+
+	.form-title {
+		font-size: 27px;
+		font-weight: 800;
+		letter-spacing: -0.035em;
+		line-height: 1.1;
+		color: var(--ink);
+		text-wrap: balance;
+		margin-bottom: 10px;
+	}
+
+	.form-lede {
+		font-size: 13.5px;
+		color: var(--muted);
+		line-height: 1.6;
+		margin-bottom: 28px;
+	}
+
+	.generate-btn {
+		display: block;
+		width: 100%;
+		margin-top: 24px;
+		font-family: 'Manrope', system-ui, sans-serif;
+		font-size: 14.5px;
+		font-weight: 700;
+		color: #fff;
+		background: var(--accent);
+		border: none;
+		border-radius: 10px;
+		padding: 12px 20px;
+		cursor: pointer;
+		letter-spacing: 0.01em;
+		transition:
+			background 0.15s,
+			transform 0.08s,
+			opacity 0.15s;
+	}
+
+	.generate-btn:hover:not(:disabled) {
+		background: var(--accent-hi);
+	}
+
+	.generate-btn:active:not(:disabled) {
+		transform: translateY(1px);
+	}
+
+	.generate-btn:disabled {
+		opacity: 0.55;
+		cursor: default;
+	}
+
+	.generate-btn:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 3px;
+	}
+
+	.results-panel {
+		order: 2;
+		background: var(--surface-alt);
+		padding: 32px 28px;
+		display: flex;
+		flex-direction: column;
+		transition:
+			background 0.25s,
+			border-color 0.25s;
+	}
+
+	.results-top {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.panel-label {
+		font-family: 'JetBrains Mono', ui-monospace, monospace;
+		font-size: 10.5px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.15em;
+		color: var(--muted);
+	}
+
+	.panel-divider {
+		height: 1px;
+		margin: 14px 0;
+		background: var(--border);
+		position: relative;
+		overflow: hidden;
+	}
+
+	.panel-divider::after {
+		content: '';
+		position: absolute;
+		inset-block: 0;
+		left: -50%;
+		width: 40%;
+		background: var(--accent);
+		opacity: 0;
+		border-radius: 1px;
+	}
+
+	.results-panel.loading .panel-divider::after {
+		opacity: 1;
+		animation: progress-bar 1.4s ease-in-out infinite;
+	}
+
+	@keyframes progress-bar {
+		0% {
+			left: -45%;
+		}
+		100% {
+			left: 120%;
+		}
+	}
+
+	@media (max-width: 680px) {
+		.card {
+			border-radius: 0;
+			box-shadow: none;
+			border-left: none;
+			border-right: none;
+			border-top: none;
+			min-height: 100svh;
+		}
+
+		.card-body {
+			grid-template-columns: 1fr;
+			min-height: auto;
+		}
+
+		.form-panel {
+			order: 1;
+			padding: 28px 22px 24px;
+			border-right: none;
+			border-bottom: 1px solid var(--border);
+		}
+
+		.results-panel {
+			order: 2;
+			padding: 24px 22px 28px;
+			min-height: 260px;
+		}
+
+		.card-header {
+			padding: 14px 18px;
+		}
+
+		.form-title {
+			font-size: 22px;
+		}
+	}
+</style>

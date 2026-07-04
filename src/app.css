@@ -1,0 +1,91 @@
+/* ── Light tokens ───────────────────────────── */
+:root {
+	--page: #edf1fa;
+	--surface: #ffffff;
+	--surface-alt: #f3f7fd;
+	--border: #d8deec;
+	--border-soft: #e8edf8;
+	--ink: #0e1116;
+	--ink-2: #3c434d;
+	--muted: #8792a2;
+	--accent: #2563eb;
+	--accent-dim: rgba(37, 99, 235, 0.11);
+	--accent-hi: #1d4fd7;
+	--green: #16a34a;
+	--red: #e5484d;
+	--red-dim: rgba(229, 72, 77, 0.08);
+	--shadow-card: 0 20px 60px -24px rgba(14, 17, 22, 0.18), 0 0 0 1px rgba(14, 17, 22, 0.055);
+	--shadow-btn: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Dark tokens (explicit click) ──────────── */
+:root[data-theme='dark'] {
+	--page: #060a10;
+	--surface: #0d1117;
+	--surface-alt: #080d14;
+	--border: #1e2535;
+	--border-soft: #141c28;
+	--ink: #dde4f2;
+	--ink-2: #8b95a8;
+	--muted: #424f61;
+	--accent-dim: rgba(37, 99, 235, 0.18);
+	--red-dim: rgba(229, 72, 77, 0.11);
+	--shadow-card: 0 20px 60px -24px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.045);
+	--shadow-btn: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Dark tokens (system preference) ───────── */
+@media (prefers-color-scheme: dark) {
+	:root[data-theme='system'] {
+		--page: #060a10;
+		--surface: #0d1117;
+		--surface-alt: #080d14;
+		--border: #1e2535;
+		--border-soft: #141c28;
+		--ink: #dde4f2;
+		--ink-2: #8b95a8;
+		--muted: #424f61;
+		--accent-dim: rgba(37, 99, 235, 0.18);
+		--red-dim: rgba(229, 72, 77, 0.11);
+		--shadow-card: 0 20px 60px -24px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.045);
+		--shadow-btn: 0 1px 4px rgba(0, 0, 0, 0.4);
+	}
+}
+
+/* ── Reset ──────────────────────────────────── */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	min-height: 100svh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px;
+	background: var(--page);
+	font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+	color: var(--ink);
+	-webkit-font-smoothing: antialiased;
+	transition: background 0.25s;
+}
+
+@media (max-width: 680px) {
+	body {
+		padding: 0;
+		align-items: flex-start;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}

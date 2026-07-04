@@ -2,11 +2,30 @@
   "name": "pwdgen",
   "version": "1.0.0",
   "description": "Deterministic password generator — same inputs always produce the same passwords",
+  "type": "module",
   "scripts": {
-    "build": "npx esbuild index.ts --bundle --outfile=node.js --platform=node --target=node18"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test:unit": "vitest",
+    "test:e2e": "playwright test",
+    "build:cli": "npx esbuild index.ts --bundle --outfile=node.js --platform=node --target=node18"
   },
   "devDependencies": {
+    "@playwright/test": "1.61.1",
+    "@sveltejs/adapter-static": "3.0.10",
+    "@sveltejs/kit": "2.69.1",
+    "@sveltejs/vite-plugin-svelte": "7.1.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/svelte": "5.4.2",
+    "@tsconfig/svelte": "5.0.8",
+    "jsdom": "29.1.1",
+    "svelte": "5.56.4",
+    "svelte-check": "4.7.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "6.4.3",
+    "vitest": "4.1.9"
   }
 }
