@@ -6,7 +6,9 @@ export default {
 	kit: {
 		adapter: adapter({ fallback: '404.html' }),
 		paths: {
-			base: process.env.NODE_ENV === 'production' ? '/pwdgen' : ''
+			base: process.env.NODE_ENV === 'production'
+				? (process.env.SVELTE_BASE_PATH ?? '/pwdgen')
+				: ''
 		}
 	}
 };

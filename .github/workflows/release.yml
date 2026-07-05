@@ -21,19 +21,33 @@ jobs:
 
       - run: npm ci
 
-      - name: Build
+      - name: Build release archive
         run: npm run build
         env:
           VITE_APP_VERSION: ${{ github.ref_name }}
 
       - name: Package build artifact
+        id: package
         run: |
           VERSION="${{ github.ref_name }}"
           ARCHIVE="pwdgen-${VERSION}.tar.gz"
           tar -czf "$ARCHIVE" -C build .
           echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
           echo "sha256=$(sha256sum "$ARCHIVE" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
-        id: package
+
+      - name: Build versioned path artifact
+        run: npm run build
+        env:
+          VITE_APP_VERSION: ${{ github.ref_name }}
+          SVELTE_BASE_PATH: /pwdgen/${{ github.ref_name }}
+
+      - name: Deploy versioned path to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          destination_dir: ${{ github.ref_name }}
+          keep_files: true
 
       - name: Create signed release
         uses: softprops/action-gh-release@v2
@@ -41,6 +55,15 @@ jobs:
           name: ${{ github.ref_name }}
           body: |
             ## pwdgen ${{ github.ref_name }}
+
+            ### Live URLs
+
+            | Path | Description |
+            |------|-------------|
+            | https://paras-verma.github.io/pwdgen/ | Latest version (always up to date) |
+            | https://paras-verma.github.io/pwdgen/${{ github.ref_name }}/ | This release — permanent URL |
+
+            Use the versioned URL as a bookmark if you need to stay on this specific release.
 
             ### Verify this release
 
@@ -55,12 +78,7 @@ jobs:
             ${{ steps.package.outputs.sha256 }}
             ```
 
-            The archive contains the complete static site. Extract and open `404.html`
-            in your browser to run the app offline, or serve the directory with any
-            static file server.
-
-            ### Live URL
-
-            https://paras-verma.github.io/pwdgen/
+            The archive contains the complete static site. Extract it, then open
+            `404.html` in your browser or serve the directory with any static file server.
           files: ${{ steps.package.outputs.archive }}
           generate_release_notes: true
