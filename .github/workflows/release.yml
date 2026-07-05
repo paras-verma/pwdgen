@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npm run build
+        env:
+          VITE_APP_VERSION: ${{ github.ref_name }}
+
+      - name: Package build artifact
+        run: |
+          VERSION="${{ github.ref_name }}"
+          ARCHIVE="pwdgen-${VERSION}.tar.gz"
+          tar -czf "$ARCHIVE" -C build .
+          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "$ARCHIVE" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+        id: package
+
+      - name: Create signed release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body: |
+            ## pwdgen ${{ github.ref_name }}
+
+            ### Verify this release
+
+            Download `${{ steps.package.outputs.archive }}` from the assets below and run:
+
+            ```sh
+            sha256sum ${{ steps.package.outputs.archive }}
+            ```
+
+            Expected SHA-256:
+            ```
+            ${{ steps.package.outputs.sha256 }}
+            ```
+
+            The archive contains the complete static site. Extract and open `404.html`
+            in your browser to run the app offline, or serve the directory with any
+            static file server.
+
+            ### Live URL
+
+            https://paras-verma.github.io/pwdgen/
+          files: ${{ steps.package.outputs.archive }}
+          generate_release_notes: true

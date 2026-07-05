@@ -14,6 +14,10 @@
 	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
+	const appVersion: string = import.meta.env.VITE_APP_VERSION ?? '1.0.0';
+	const releaseUrl = `https://github.com/paras-verma/pwdgen/releases/tag/v${appVersion}`;
+	const repoUrl = 'https://github.com/paras-verma/pwdgen';
+
 	let showInfo = $state(false);
 	let generatedPasswords = $state<string[]>([]);
 	let isGenerating = $state(false);
@@ -195,6 +199,28 @@
 		</div>
 	{/if}
 </div>
+
+<footer class="flex items-center justify-center gap-4 mt-4 max-[680px]:hidden">
+	<a
+		href={releaseUrl}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="flex items-center gap-1.5 font-mono text-[11px] text-muted hover:text-ink-2 transition-colors duration-[120ms]"
+	>
+		<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 7 12 2 17 7"/><path d="M12 2v13"/><path d="M5 12H2a10 10 0 1 0 20 0h-3"/></svg>
+		v{appVersion}
+	</a>
+	<span class="text-border text-[11px]">·</span>
+	<a
+		href={repoUrl}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="flex items-center gap-1.5 font-mono text-[11px] text-muted hover:text-ink-2 transition-colors duration-[120ms]"
+	>
+		<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+		GitHub
+	</a>
+</footer>
 
 {#if showShareModal}
 	<ShareModal onClose={() => (showShareModal = false)} />

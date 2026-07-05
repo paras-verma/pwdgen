@@ -27,7 +27,12 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Get version
+        id: version
+        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '1.0.0')" >> "$GITHUB_OUTPUT"
       - run: npm run build
+        env:
+          VITE_APP_VERSION: ${{ steps.version.outputs.tag }}
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
