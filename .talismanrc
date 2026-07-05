@@ -34,7 +34,7 @@ fileignoreconfig:
 - filename: src/app.css
   checksum: 47c399cf0dd985ce878f619bce2e2b58ff53c09d2f71c253097e904fdad4f7e5
 - filename: src/app.html
-  checksum: 317e7d0a0d64fc3691cab08c2902642e6c822162d7a95584515df7227ff7a91a
+  checksum: 02ba337c6f41da89f15d72f3f646dde6dd934d9908e48360d095a0236f64a5a7
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte

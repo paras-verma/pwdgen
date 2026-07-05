@@ -3,12 +3,32 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>pwdgen — deterministic password generator</title>
+		<meta name="description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+		<meta name="keywords" content="password generator, deterministic passwords, PBKDF2, passphrase, offline, privacy" />
+
+		<link rel="canonical" href="https://paras-verma.github.io/pwdgen/" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://paras-verma.github.io/pwdgen/" />
+		<meta property="og:title" content="pwdgen — deterministic password generator" />
+		<meta property="og:description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+		<meta property="og:site_name" content="pwdgen" />
+
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="pwdgen — deterministic password generator" />
+		<meta name="twitter:description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+
+		<link rel="icon" type="image/svg+xml" href="%sveltekit.assets%/favicon.svg" />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
+
 		<script>
 			const savedTheme = localStorage.getItem('pwdgen-theme') ?? 'system';
 			document.documentElement.dataset.theme = savedTheme;
