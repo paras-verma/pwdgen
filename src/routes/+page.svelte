@@ -43,6 +43,7 @@
 	const canGenerate = $derived(
 		passphraseStore.confirmed &&
 		!!configStore.selectedVendorName &&
+		!configStore.selectedVendor?.locked &&
 		!isGenerating
 	);
 

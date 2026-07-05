@@ -22,9 +22,6 @@ function createConfigStore() {
 		isLoading = true;
 		try {
 			vendors = await loadVendors(configKey);
-			if (vendors.length > 0 && !selectedVendorName) {
-				selectedVendorName = vendors[0].name;
-			}
 		} finally {
 			isLoading = false;
 		}
