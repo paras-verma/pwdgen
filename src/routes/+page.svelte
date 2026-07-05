@@ -15,8 +15,8 @@
 	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
-	const appVersion: string = import.meta.env.VITE_APP_VERSION ?? '1.0.0';
-	const releaseUrl = `https://github.com/paras-verma/pwdgen/releases/tag/v${appVersion}`;
+	const appVersion: string = import.meta.env.VITE_APP_VERSION;
+	const releaseUrl = 'https://github.com/paras-verma/pwdgen/releases';
 	const repoUrl = 'https://github.com/paras-verma/pwdgen';
 
 	let showInfo = $state(false);
@@ -147,7 +147,7 @@
 				aria-pressed={showInfo}
 				onclick={() => (showInfo = !showInfo)}
 			>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 			</button>
 			<ThemeToggle />
 		</div>
