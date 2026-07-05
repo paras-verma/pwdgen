@@ -2,7 +2,7 @@ fileignoreconfig:
 - filename: README.md
   checksum: 201624452fc69b60733bb7645a5b763805422ce70293d0db9ef6910c9f70f2be
 - filename: SECURITY.md
-  checksum: 7e7f984d48d4699e8030f06fd34b2f12bb10d938c9dd98cb899e5093e066458c
+  checksum: 7fbdeae3391dc527b68f0d17a1e927de1aea4b3459c0ee3290051ebe9ac31c17
 - filename: pnpm-lock.yaml
   checksum: 49472769274a6fc8618ea5def6bbcda1a284596d7a66855d7c95f9d9ee3d49e7
 - filename: package.json

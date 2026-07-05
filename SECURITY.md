@@ -18,13 +18,23 @@ The artifact is built directly from the tagged source with no manual upload step
 
 ### Verifying integrity
 
-Download `pwdgen-vX.Y.Z.html` from the [Releases page](https://github.com/paras-verma/pwdgen/releases) and run:
+Download `pwdgen-vX.Y.Z.html` from the [Releases page](https://github.com/paras-verma/pwdgen/releases).
+
+**Hash check** — proves the file was not modified after it was built:
 
 ```sh
 sha256sum pwdgen-vX.Y.Z.html
 ```
 
-Compare the output against the **Expected SHA-256** in the release notes. A matching hash proves the file has not been modified since it was built from the tagged commit.
+Compare against the **Expected SHA-256** in the release notes.
+
+**Provenance attestation** — proves the file was built by this repository's GitHub Actions workflow from a specific commit, using Sigstore:
+
+```sh
+gh attestation verify pwdgen-vX.Y.Z.html --repo paras-verma/pwdgen
+```
+
+A passing attestation means the artifact was produced by the CI pipeline and was not substituted after the fact.
 
 ### Cryptographic design
 

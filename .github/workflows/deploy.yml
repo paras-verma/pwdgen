@@ -8,6 +8,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  attestations: write
 
 concurrency:
   group: release
@@ -64,6 +65,11 @@ jobs:
       - name: Generate single-file artifact
         run: pnpm run build:single
 
+      - name: Attest artifact
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/pwdgen.html
+
       - name: Hash
         id: hash
         run: echo "sha256=$(sha256sum build/pwdgen.html | awk '{print $1}')" >> "$GITHUB_OUTPUT"
@@ -111,6 +117,12 @@ jobs:
             Expected SHA-256:
             ```
             ${{ steps.hash.outputs.sha256 }}
+            ```
+
+            Or verify build provenance via GitHub's attestation store:
+
+            ```sh
+            gh attestation verify ${{ steps.artifact.outputs.name }} --repo paras-verma/pwdgen
             ```
           files: ${{ steps.artifact.outputs.name }}
           generate_release_notes: true
