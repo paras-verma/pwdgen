@@ -1,6 +1,6 @@
 {
   "name": "pwdgen",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "packageManager": "pnpm@10.28.0",
   "description": "Deterministic password generator — same inputs always produce the same passwords",
   "type": "module",
