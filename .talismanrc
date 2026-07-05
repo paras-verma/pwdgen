@@ -71,6 +71,10 @@ fileignoreconfig:
   checksum: 34189ab7391cc84c2e7fc949723c110de4b1c5aff3045991f58c13ec5b497ebe
 - filename: src/lib/crypto/algo/v2.ts
   checksum: 350333d31c32a04731f6d721b3ea9f0614c05c46fa89dfd64f2f4f3174020e51
+- filename: src/lib/crypto/algo/v1.test.ts
+  checksum: 723868b6879b539c20e9a04f112e7cdd848c7a68131d035493259c329d4396ae
+- filename: src/lib/crypto/algo/v2.test.ts
+  checksum: 541044c0a3717fce03b4c90e21e73e2f92586ccf0f0d68fb6712774af8e809e6
 - filename: src/lib/stores/configStore.svelte.ts
   checksum: c124231684997dc031cb31cd7008fcee8f512ee9b6be4e26d6ecd6dd7a2a3f95
 - filename: src/lib/stores/passphraseStore.svelte.ts
