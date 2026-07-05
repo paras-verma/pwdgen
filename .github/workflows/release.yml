@@ -25,12 +25,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
         env:
           VITE_APP_VERSION: ${{ github.ref_name }}
 
       - name: Generate single-file artifact
-        run: npm run build:single
+        run: pnpm run build:single
 
       - name: Compute SHA-256
         id: hash
@@ -44,7 +44,7 @@ jobs:
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
 
       - name: Build versioned path artifact
-        run: npm run build
+        run: pnpm run build
         env:
           VITE_APP_VERSION: ${{ github.ref_name }}
           SVELTE_BASE_PATH: /pwdgen/${{ github.ref_name }}
