@@ -7,12 +7,14 @@
 	import ResultsPanel from '$lib/components/ResultsPanel.svelte';
 	import ShareModal from '$lib/components/ShareModal.svelte';
 	import ImportBanner from '$lib/components/ImportBanner.svelte';
+	import InfoPanel from '$lib/components/InfoPanel.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { generatePasswords } from '$lib/crypto/passwordDerivation';
 	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
+	let showInfo = $state(false);
 	let generatedPasswords = $state<string[]>([]);
 	let isGenerating = $state(false);
 	let generationError = $state<string | null>(null);
@@ -125,6 +127,15 @@
 					<span class="max-[680px]:hidden">Share</span>
 				</button>
 			{/if}
+			<button
+				type="button"
+				class="flex items-center justify-center w-[30px] h-[30px] font-sans font-semibold border-[1.5px] rounded-lg cursor-pointer transition-[color,border-color,background] duration-[120ms] {showInfo ? 'text-accent border-accent bg-accent-dim' : 'text-muted border-border bg-none hover:text-accent hover:border-accent'}"
+				title="About pwdgen"
+				aria-pressed={showInfo}
+				onclick={() => (showInfo = !showInfo)}
+			>
+				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+			</button>
 			<ThemeToggle />
 		</div>
 	</header>
@@ -137,48 +148,52 @@
 		/>
 	{/if}
 
-	<div class="grid [grid-template-columns:7fr_5fr] min-h-[520px] max-[680px]:grid-cols-1 max-[680px]:min-h-auto">
-		<section class="order-1 px-11 py-10 flex flex-col gap-0 border-r border-r-border max-[680px]:order-1 max-[680px]:px-[22px] max-[680px]:py-7 max-[680px]:border-r-0 max-[680px]:border-b max-[680px]:border-b-border">
-			<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent mb-[10px]">Generator</p>
-			<h1 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-[10px] max-[680px]:text-[22px]">Derive passwords<br />from a passphrase</h1>
-			<p class="text-[13.5px] text-muted leading-[1.6] mb-7">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
+	{#if showInfo}
+		<InfoPanel />
+	{:else}
+		<div class="grid [grid-template-columns:7fr_5fr] min-h-[520px] max-[680px]:grid-cols-1 max-[680px]:min-h-auto">
+			<section class="order-1 px-11 py-10 flex flex-col gap-0 border-r border-r-border max-[680px]:order-1 max-[680px]:px-[22px] max-[680px]:py-7 max-[680px]:border-r-0 max-[680px]:border-b max-[680px]:border-b-border">
+				<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent mb-[10px]">Generator</p>
+				<h1 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-[10px] max-[680px]:text-[22px]">Derive passwords<br />from a passphrase</h1>
+				<p class="text-[13.5px] text-muted leading-[1.6] mb-7">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
 
-			<PassphraseForm />
+				<PassphraseForm />
 
-			{#if passphraseStore.confirmed}
-				<div class="mt-6 flex flex-col gap-0">
-					<VendorDropdown configKey={passphraseStore.configKey} />
-					<AdvancedOptions />
-				</div>
-				<button
-					type="button"
-					class="block w-full mt-4 font-sans text-[14.5px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,transform,opacity] duration-150 hover:not-disabled:bg-accent-hi active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
-					disabled={!canGenerate}
-					onclick={handleGenerate}
-				>
-					{isGenerating ? 'Generating…' : 'Generate passwords'}
-				</button>
-			{/if}
-		</section>
+				{#if passphraseStore.confirmed}
+					<div class="mt-6 flex flex-col gap-0">
+						<VendorDropdown configKey={passphraseStore.configKey} />
+						<AdvancedOptions />
+					</div>
+					<button
+						type="button"
+						class="block w-full mt-4 font-sans text-[14.5px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,transform,opacity] duration-150 hover:not-disabled:bg-accent-hi active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
+						disabled={!canGenerate}
+						onclick={handleGenerate}
+					>
+						{isGenerating ? 'Generating…' : 'Generate passwords'}
+					</button>
+				{/if}
+			</section>
 
-		<section
-			class="results-section order-2 bg-surface-alt px-7 py-8 flex flex-col transition-[background,border-color] duration-[250ms] max-[680px]:order-2 max-[680px]:px-[22px] max-[680px]:py-6 max-[680px]:min-h-[260px]"
-			class:loading={isGenerating}
-			aria-live="polite"
-			bind:this={resultsPanelEl}
-		>
-			<span class="font-mono text-[10.5px] font-semibold uppercase tracking-[0.15em] text-muted">Results</span>
-			<div class="divider h-px my-[14px] bg-border relative overflow-hidden"></div>
+			<section
+				class="results-section order-2 bg-surface-alt px-7 py-8 flex flex-col transition-[background,border-color] duration-[250ms] max-[680px]:order-2 max-[680px]:px-[22px] max-[680px]:py-6 max-[680px]:min-h-[260px]"
+				class:loading={isGenerating}
+				aria-live="polite"
+				bind:this={resultsPanelEl}
+			>
+				<span class="font-mono text-[10.5px] font-semibold uppercase tracking-[0.15em] text-muted">Results</span>
+				<div class="divider h-px my-[14px] bg-border relative overflow-hidden"></div>
 
-			<ResultsPanel
-				passwords={generatedPasswords}
-				{isGenerating}
-				errorMessage={generationError}
-				lastCopiedIndex={activeVendor?.lastCopiedIndex ?? null}
-				onCopy={handleCopyAtIndex}
-			/>
-		</section>
-	</div>
+				<ResultsPanel
+					passwords={generatedPasswords}
+					{isGenerating}
+					errorMessage={generationError}
+					lastCopiedIndex={activeVendor?.lastCopiedIndex ?? null}
+					onCopy={handleCopyAtIndex}
+				/>
+			</section>
+		</div>
+	{/if}
 </div>
 
 {#if showShareModal}

@@ -38,7 +38,9 @@ fileignoreconfig:
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
-  checksum: 705cefe4b4218c6839a2b429c07aa1698faa6711bf8b84f4576aa605045bf7fb
+  checksum: 199e74d6e2cb6856667a09303f0ea3d81fea2d974608c1525bdacdfcc62ae26f
+- filename: src/lib/components/InfoPanel.svelte
+  checksum: c4f38d4b8009ac06abe43ce6caaaeda4b4f200c08861b92742a74d2287a76c69
 - filename: src/lib/crypto/configShare.ts
   checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
 - filename: src/lib/components/ShareModal.svelte
