@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en" %sveltekit.attributes%>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>pwdgen — deterministic password generator</title>
+		<meta name="description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+		<meta name="keywords" content="password generator, deterministic passwords, PBKDF2, passphrase, offline, privacy" />
+
+		<link rel="canonical" href="https://paras-verma.github.io/pwdgen/" />
+
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://paras-verma.github.io/pwdgen/" />
+		<meta property="og:title" content="pwdgen — deterministic password generator" />
+		<meta property="og:description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+		<meta property="og:site_name" content="pwdgen" />
+
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="pwdgen — deterministic password generator" />
+		<meta name="twitter:description" content="Generate strong, deterministic passwords from a master passphrase. Same inputs always produce the same passwords. Nothing is stored or sent anywhere." />
+
+		<link rel="icon" type="image/svg+xml" href="/pwdgen/favicon.svg" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+
+		<script>
+			const savedTheme = localStorage.getItem('pwdgen-theme') ?? 'system';
+			document.documentElement.dataset.theme = savedTheme;
+		</script>
+		<link href="/pwdgen/_app/immutable/entry/start.DXF3kYH7.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/BSn_6qVZ.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/Jos02uwP.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/B35pVgbF.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/entry/app.CyIDSyLa.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/fT-6oWdi.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/KYyFspFW.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/DTs095cI.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/chunks/Chx-8bur.js" rel="modulepreload">
+		<link href="/pwdgen/_app/immutable/nodes/0.3RiTyvjG.js" rel="modulepreload">
+		
+		<link href="/pwdgen/_app/immutable/assets/0.iKQomSTK.css" rel="stylesheet">
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_1n983z3 = {
+						base: "/pwdgen",
+						assets: "/pwdgen"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/pwdgen/_app/immutable/entry/start.DXF3kYH7.js"),
+						import("/pwdgen/_app/immutable/entry/app.CyIDSyLa.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>

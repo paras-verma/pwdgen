@@ -1,0 +1,1 @@
+.divider.svelte-1uha8ag:after{content:"";position:absolute;inset-block:0;left:-50%;width:40%;background:var(--accent);opacity:0;border-radius:1px}.loading.svelte-1uha8ag .divider:where(.svelte-1uha8ag):after{opacity:1;animation:progress-bar 1.4s ease-in-out infinite}
