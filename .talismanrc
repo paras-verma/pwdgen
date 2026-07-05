@@ -3,8 +3,8 @@ fileignoreconfig:
   checksum: 201624452fc69b60733bb7645a5b763805422ce70293d0db9ef6910c9f70f2be
 - filename: SECURITY.md
   checksum: 7e7f984d48d4699e8030f06fd34b2f12bb10d938c9dd98cb899e5093e066458c
-- filename: package-lock.json
-  checksum: 6bba76222b9c965323d34c0334f65aa1ea248dc736e93f831cf7e73d12bcdd09
+- filename: pnpm-lock.yaml
+  checksum: 49472769274a6fc8618ea5def6bbcda1a284596d7a66855d7c95f9d9ee3d49e7
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
