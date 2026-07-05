@@ -60,6 +60,7 @@ function createConfigStore() {
 			count: vendor.count,
 			disallowedChars: vendor.disallowedChars,
 			lastCopiedIndex: vendor.lastCopiedIndex,
+			version: vendor.version,
 			...settings
 		};
 

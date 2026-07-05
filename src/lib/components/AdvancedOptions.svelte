@@ -1,14 +1,6 @@
 <script lang="ts">
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
-	import type { AlgorithmVersion } from '$lib/crypto/passwordDerivation';
-
-	interface Props {
-		algorithmVersion: AlgorithmVersion;
-		onAlgorithmVersionChange: (version: AlgorithmVersion) => void;
-	}
-
-	let { algorithmVersion, onAlgorithmVersionChange }: Props = $props();
 
 	let expanded = $state(false);
 
@@ -18,7 +10,7 @@
 			: null
 	);
 
-	async function updateSetting(field: 'length' | 'count' | 'disallowedChars', value: string | number) {
+	async function updateSetting(field: 'length' | 'count' | 'disallowedChars' | 'version', value: string | number) {
 		if (!activeVendor || !passphraseStore.configKey) return;
 		await configStore.updateVendorSettings(
 			activeVendor.name,
@@ -92,28 +84,17 @@
 				/>
 			</div>
 
-			<div class="mode-toggle-row">
-				<span class="mode-label">Algorithm</span>
-				<div class="mode-toggle" role="group" aria-label="Algorithm version">
-					<button
-						type="button"
-						class="mode-btn"
-						class:active={algorithmVersion === 'v1'}
-						title="v1 — bash-compatible, base64 output"
-						onclick={() => onAlgorithmVersionChange('v1')}
-					>
-						v1
-					</button>
-					<button
-						type="button"
-						class="mode-btn"
-						class:active={algorithmVersion === 'v2'}
-						title="v2 — custom alphabet, handles excluded chars reliably"
-						onclick={() => onAlgorithmVersionChange('v2')}
-					>
-						v2
-					</button>
-				</div>
+			<div class="field">
+				<label for="algorithmVersion">Algorithm</label>
+				<select
+					id="algorithmVersion"
+					disabled={!activeVendor}
+					value={activeVendor?.version ?? 'v1'}
+					onchange={(e) => updateSetting('version', (e.target as HTMLSelectElement).value)}
+				>
+					<option value="v1">v1 — bash-compatible</option>
+					<option value="v2">v2 — custom alphabet</option>
+				</select>
 			</div>
 		</div>
 	{/if}
@@ -182,6 +163,7 @@
 		color: var(--ink-2);
 	}
 
+	select,
 	input[type='text'],
 	input[type='number'] {
 		width: 100%;
@@ -211,49 +193,4 @@
 		cursor: not-allowed;
 	}
 
-	.mode-toggle-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
-
-	.mode-label {
-		font-size: 12px;
-		font-weight: 700;
-		color: var(--ink-2);
-	}
-
-	.mode-toggle {
-		display: flex;
-		background: var(--surface-alt);
-		border: 1px solid var(--border);
-		border-radius: 999px;
-		padding: 3px;
-	}
-
-	.mode-btn {
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11px;
-		font-weight: 500;
-		padding: 4px 12px;
-		border: none;
-		border-radius: 999px;
-		background: transparent;
-		color: var(--muted);
-		cursor: pointer;
-		transition:
-			background 0.15s,
-			color 0.15s,
-			box-shadow 0.15s;
-	}
-
-	.mode-btn.active {
-		background: var(--surface);
-		color: var(--ink);
-		box-shadow: var(--shadow-btn);
-	}
-
-	.mode-btn:hover:not(.active) {
-		color: var(--ink-2);
-	}
 </style>

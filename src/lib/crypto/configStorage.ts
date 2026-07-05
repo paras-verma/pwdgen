@@ -1,3 +1,5 @@
+import type { AlgorithmVersion } from './passwordDerivation';
+
 const CONFIG_STORAGE_KEY = 'pwdgen-config';
 const CONFIG_KEY_DERIVATION_SALT = 'pwdgen-config-storage-v1';
 const PBKDF2_ITERATIONS = 100000;
@@ -7,6 +9,7 @@ export interface VendorSettings {
 	count: number;
 	disallowedChars: string;
 	lastCopiedIndex: number | null;
+	version: AlgorithmVersion;
 }
 
 export interface DecryptedVendor extends VendorSettings {
@@ -35,7 +38,8 @@ export const DEFAULT_VENDOR_SETTINGS: VendorSettings = {
 	length: 16,
 	count: 5,
 	disallowedChars: '',
-	lastCopiedIndex: null
+	lastCopiedIndex: null,
+	version: 'v1'
 };
 
 export async function deriveConfigKey(passphrase: string): Promise<CryptoKey> {
@@ -90,7 +94,13 @@ async function decryptVendorSettings(
 			typeof parsed.count === 'number' &&
 			typeof parsed.disallowedChars === 'string'
 		) {
-			return parsed as VendorSettings;
+			return {
+				length: parsed.length,
+				count: parsed.count,
+				disallowedChars: parsed.disallowedChars,
+				lastCopiedIndex: parsed.lastCopiedIndex ?? null,
+				version: parsed.version === 'v2' ? 'v2' : 'v1'
+			};
 		}
 		return null;
 	} catch {
