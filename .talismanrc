@@ -12,7 +12,7 @@ fileignoreconfig:
 - filename: index.ts
   checksum: 0c6383a03ac71411e9ba7d79db2705b676fee322ffe596f1fb46a0a3e7ceba9e
 - filename: package-lock.json
-  checksum: 777a90961ef7b7336143e31f6980ee63dd442dc1339935cf4f96191f10f338bd
+  checksum: 6bba76222b9c965323d34c0334f65aa1ea248dc736e93f831cf7e73d12bcdd09
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
@@ -38,19 +38,19 @@ fileignoreconfig:
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
-  checksum: 78c36efc8be4190a559f7452534ee2941fb1d4e2fbb31d4a297b29817d863e38
+  checksum: 705cefe4b4218c6839a2b429c07aa1698faa6711bf8b84f4576aa605045bf7fb
 - filename: src/lib/crypto/configShare.ts
   checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
 - filename: src/lib/components/ShareModal.svelte
   checksum: 574f807d18b181ec8996b928b53025ea25e7117b8719968f9437c20d7c17cf28
 - filename: src/lib/components/AdvancedOptions.svelte
-  checksum: 0eb8e838a2e9006b04b8d91b541c90fa5f5384b129dc1e5ffa8daa3e9971910e
+  checksum: a0d9eb56511d88f172f1093e9014d89eee1fdebda3277336f0abdd93f67b8d0f
 - filename: src/lib/components/DeleteVendorModal.svelte
-  checksum: 69f621b2537b8a91de683da46b4591a5a67404bdc31cc6cc62175917613a0548
+  checksum: beeeeda75c20f70f266cd7e749dd262d61ba988058d3067024edfbbf9a7f1a5d
 - filename: src/lib/components/EmptyState.svelte
   checksum: e3922e13fa8ee577ee1ef45dab2cc1b3827a650d1988648676b4012bc02f6215
 - filename: src/lib/components/PassphraseForm.svelte
-  checksum: 6a0d299fd4adea7ff060d9cdf64e6d8f23eeab1fa3985d89f103351da51a838d
+  checksum: e79e1bb91d3345797f33908bd5fe6b763ab137d664d18ec41bf00d887fb7f4ca
 - filename: src/lib/components/PasswordRow.svelte
   checksum: b339b56dc402c5f21681340ac5d73577996d4944b127b754cc6df5a3eb16b5fe
 - filename: src/lib/components/ResultsPanel.svelte

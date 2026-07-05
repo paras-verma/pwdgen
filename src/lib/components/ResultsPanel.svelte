@@ -14,11 +14,11 @@
 </script>
 
 {#if errorMessage}
-	<div class="error-box">{errorMessage}</div>
+	<div class="mt-[2px] px-3 py-[10px] bg-red-dim border border-[rgba(229,72,77,0.22)] rounded-[9px] text-[12.5px] text-red leading-[1.4]">{errorMessage}</div>
 {:else if isGenerating || passwords.length === 0}
 	<EmptyState />
 {:else}
-	<ul class="pw-list">
+	<ul class="list-none flex flex-col">
 		{#each passwords as password, index}
 			<PasswordRow
 				{index}
@@ -29,22 +29,3 @@
 		{/each}
 	</ul>
 {/if}
-
-<style>
-	.pw-list {
-		list-style: none;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.error-box {
-		margin-top: 2px;
-		padding: 10px 12px;
-		background: var(--red-dim);
-		border: 1px solid rgba(229, 72, 77, 0.22);
-		border-radius: 9px;
-		font-size: 12.5px;
-		color: var(--red);
-		line-height: 1.4;
-	}
-</style>

@@ -103,24 +103,26 @@
 	}
 </script>
 
-<div class="card">
-	<header class="card-header">
-		<div class="brand">
-			<div class="brand-icon">
+<div class="w-full max-w-[920px] bg-surface border border-border rounded-[22px] shadow-[var(--shadow-card)] overflow-hidden transition-[background,border-color,box-shadow] duration-[250ms] max-[680px]:rounded-none max-[680px]:shadow-none max-[680px]:border-l-0 max-[680px]:border-r-0 max-[680px]:border-t-0 max-[680px]:min-h-svh">
+	<header class="flex items-center justify-between px-7 py-4 border-b border-b-border max-[680px]:px-[18px] max-[680px]:py-[14px]">
+		<div class="flex items-center gap-2">
+			<div class="w-[26px] h-[26px] flex items-center justify-center bg-accent-dim rounded-[7px] text-accent">
 				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 			</div>
-			<span class="brand-text">pwdgen<em> · deterministic</em></span>
+			<span class="font-mono text-[13px] font-semibold text-ink-2 tracking-[0.03em]">
+				pwdgen<em class="not-italic text-muted font-normal max-[680px]:hidden"> · deterministic</em>
+			</span>
 		</div>
-		<div class="header-actions">
+		<div class="flex items-center gap-2">
 			{#if passphraseStore.confirmed && configStore.vendors.length > 0}
 				<button
 					type="button"
-					class="share-btn"
+					class="flex items-center gap-1.5 font-sans text-[12.5px] font-semibold text-muted bg-none border-[1.5px] border-border rounded-lg py-[5px] px-[11px] cursor-pointer transition-[color,border-color] duration-[120ms] hover:text-accent hover:border-accent max-[680px]:px-2"
 					title="Share / export config"
 					onclick={() => (showShareModal = true)}
 				>
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-					<span>Share</span>
+					<span class="max-[680px]:hidden">Share</span>
 				</button>
 			{/if}
 			<ThemeToggle />
@@ -135,22 +137,22 @@
 		/>
 	{/if}
 
-	<div class="card-body">
-		<section class="form-panel">
-			<p class="form-eyebrow">Generator</p>
-			<h1 class="form-title">Derive passwords<br />from a passphrase</h1>
-			<p class="form-lede">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
+	<div class="grid [grid-template-columns:7fr_5fr] min-h-[520px] max-[680px]:grid-cols-1 max-[680px]:min-h-auto">
+		<section class="order-1 px-11 py-10 flex flex-col gap-0 border-r border-r-border max-[680px]:order-1 max-[680px]:px-[22px] max-[680px]:py-7 max-[680px]:border-r-0 max-[680px]:border-b max-[680px]:border-b-border">
+			<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent mb-[10px]">Generator</p>
+			<h1 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-[10px] max-[680px]:text-[22px]">Derive passwords<br />from a passphrase</h1>
+			<p class="text-[13.5px] text-muted leading-[1.6] mb-7">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
 
 			<PassphraseForm />
 
 			{#if passphraseStore.confirmed}
-				<div class="vendor-advanced">
+				<div class="mt-6 flex flex-col gap-0">
 					<VendorDropdown configKey={passphraseStore.configKey} />
 					<AdvancedOptions />
 				</div>
 				<button
 					type="button"
-					class="generate-btn"
+					class="block w-full mt-4 font-sans text-[14.5px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,transform,opacity] duration-150 hover:not-disabled:bg-accent-hi active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
 					disabled={!canGenerate}
 					onclick={handleGenerate}
 				>
@@ -159,9 +161,14 @@
 			{/if}
 		</section>
 
-		<section class="results-panel" class:loading={isGenerating} aria-live="polite" bind:this={resultsPanelEl}>
-			<span class="panel-label">Results</span>
-			<div class="panel-divider"></div>
+		<section
+			class="results-section order-2 bg-surface-alt px-7 py-8 flex flex-col transition-[background,border-color] duration-[250ms] max-[680px]:order-2 max-[680px]:px-[22px] max-[680px]:py-6 max-[680px]:min-h-[260px]"
+			class:loading={isGenerating}
+			aria-live="polite"
+			bind:this={resultsPanelEl}
+		>
+			<span class="font-mono text-[10.5px] font-semibold uppercase tracking-[0.15em] text-muted">Results</span>
+			<div class="divider h-px my-[14px] bg-border relative overflow-hidden"></div>
 
 			<ResultsPanel
 				passwords={generatedPasswords}
@@ -179,202 +186,7 @@
 {/if}
 
 <style>
-	.card {
-		width: 100%;
-		max-width: 920px;
-		background: var(--surface);
-		border: 1px solid var(--border);
-		border-radius: 22px;
-		box-shadow: var(--shadow-card);
-		overflow: hidden;
-		transition:
-			background 0.25s,
-			border-color 0.25s,
-			box-shadow 0.25s;
-	}
-
-	.card-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 16px 28px;
-		border-bottom: 1px solid var(--border);
-	}
-
-	.header-actions {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.share-btn {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 12.5px;
-		font-weight: 600;
-		color: var(--muted);
-		background: none;
-		border: 1.5px solid var(--border);
-		border-radius: 8px;
-		padding: 5px 11px;
-		cursor: pointer;
-		transition: color 0.12s, border-color 0.12s;
-	}
-
-	.share-btn:hover {
-		color: var(--accent);
-		border-color: var(--accent);
-	}
-
-	.brand {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-	}
-
-	.brand-icon {
-		width: 26px;
-		height: 26px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--accent-dim);
-		border-radius: 7px;
-		color: var(--accent);
-	}
-
-	.brand-text {
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 13px;
-		font-weight: 600;
-		color: var(--ink-2);
-		letter-spacing: 0.03em;
-	}
-
-	.brand-text em {
-		font-style: normal;
-		color: var(--muted);
-		font-weight: 400;
-	}
-
-	.card-body {
-		display: grid;
-		grid-template-columns: 7fr 5fr;
-		min-height: 520px;
-	}
-
-	.form-panel {
-		order: 1;
-		padding: 40px 44px;
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-		border-right: 1px solid var(--border);
-	}
-
-	.form-eyebrow {
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.16em;
-		color: var(--accent);
-		margin-bottom: 10px;
-	}
-
-	.form-title {
-		font-size: 27px;
-		font-weight: 800;
-		letter-spacing: -0.035em;
-		line-height: 1.1;
-		color: var(--ink);
-		text-wrap: balance;
-		margin-bottom: 10px;
-	}
-
-	.form-lede {
-		font-size: 13.5px;
-		color: var(--muted);
-		line-height: 1.6;
-		margin-bottom: 28px;
-	}
-
-	.vendor-advanced {
-		margin-top: 24px;
-		display: flex;
-		flex-direction: column;
-		gap: 0;
-	}
-
-	.generate-btn {
-		display: block;
-		width: 100%;
-		margin-top: 16px;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14.5px;
-		font-weight: 700;
-		color: #fff;
-		background: var(--accent);
-		border: none;
-		border-radius: 10px;
-		padding: 12px 20px;
-		cursor: pointer;
-		letter-spacing: 0.01em;
-		transition:
-			background 0.15s,
-			transform 0.08s,
-			opacity 0.15s;
-	}
-
-	.generate-btn:hover:not(:disabled) {
-		background: var(--accent-hi);
-	}
-
-	.generate-btn:active:not(:disabled) {
-		transform: translateY(1px);
-	}
-
-	.generate-btn:disabled {
-		opacity: 0.55;
-		cursor: default;
-	}
-
-	.generate-btn:focus-visible {
-		outline: 2px solid var(--accent);
-		outline-offset: 3px;
-	}
-
-	.results-panel {
-		order: 2;
-		background: var(--surface-alt);
-		padding: 32px 28px;
-		display: flex;
-		flex-direction: column;
-		transition:
-			background 0.25s,
-			border-color 0.25s;
-	}
-
-	.panel-label {
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 10.5px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.15em;
-		color: var(--muted);
-	}
-
-	.panel-divider {
-		height: 1px;
-		margin: 14px 0;
-		background: var(--border);
-		position: relative;
-		overflow: hidden;
-	}
-
-	.panel-divider::after {
+	.divider::after {
 		content: '';
 		position: absolute;
 		inset-block: 0;
@@ -385,66 +197,8 @@
 		border-radius: 1px;
 	}
 
-	.results-panel.loading .panel-divider::after {
+	.loading .divider::after {
 		opacity: 1;
 		animation: progress-bar 1.4s ease-in-out infinite;
-	}
-
-	@keyframes progress-bar {
-		0% {
-			left: -45%;
-		}
-		100% {
-			left: 120%;
-		}
-	}
-
-	@media (max-width: 680px) {
-		.card {
-			border-radius: 0;
-			box-shadow: none;
-			border-left: none;
-			border-right: none;
-			border-top: none;
-			min-height: 100svh;
-		}
-
-		.card-body {
-			grid-template-columns: 1fr;
-			min-height: auto;
-		}
-
-		.form-panel {
-			order: 1;
-			padding: 28px 22px 24px;
-			border-right: none;
-			border-bottom: 1px solid var(--border);
-		}
-
-		.results-panel {
-			order: 2;
-			padding: 24px 22px 28px;
-			min-height: 260px;
-		}
-
-		.card-header {
-			padding: 14px 18px;
-		}
-
-		.form-title {
-			font-size: 22px;
-		}
-
-		.brand-text em {
-			display: none;
-		}
-
-		.share-btn span {
-			display: none;
-		}
-
-		.share-btn {
-			padding: 6px 8px;
-		}
 	}
 </style>

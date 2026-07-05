@@ -75,14 +75,14 @@
 	}
 </script>
 
-<div class="vendor-section">
-	<label class="vendor-label" for="vendorInput">Service</label>
-	<div class="vendor-row">
-		<div class="combobox">
+<div class="flex flex-col gap-1.5">
+	<label class="text-xs font-bold text-ink-2" for="vendorInput">Service</label>
+	<div class="flex gap-1.5 items-start">
+		<div class="relative flex-1">
 			<input
 				id="vendorInput"
 				type="text"
-				class="vendor-input"
+				class="w-full font-sans text-[14.5px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[10px] px-[13px] py-[10px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)]"
 				placeholder="e.g. github"
 				autocomplete="off"
 				spellcheck="false"
@@ -94,19 +94,18 @@
 			/>
 
 			{#if dropdownOpen && (filteredVendors.length > 0 || isNewVendorName)}
-				<div class="dropdown" role="listbox">
+				<div class="absolute top-[calc(100%+4px)] left-0 right-0 bg-surface border-[1.5px] border-border rounded-[10px] shadow-[var(--shadow-card)] z-50 overflow-hidden max-h-[220px] overflow-y-auto" role="listbox">
 					{#each filteredVendors as vendor}
 						<button
 							type="button"
-							class="dropdown-item"
-							class:locked={vendor.locked}
+							class="w-full flex items-center justify-between gap-2 px-[13px] py-[9px] bg-none border-none font-sans text-[13.5px] font-medium cursor-pointer text-left transition-[background] duration-100 hover:bg-accent-dim aria-selected:bg-accent-dim {vendor.locked ? 'text-muted' : 'text-ink'}"
 							role="option"
 							aria-selected={vendor.name === configStore.selectedVendorName}
 							onmousedown={() => handleSelect(vendor.name)}
 						>
-							<span class="item-name">{vendor.name}</span>
+							<span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{vendor.name}</span>
 							{#if vendor.locked}
-								<svg class="lock-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+								<svg class="shrink-0 text-muted" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 							{/if}
 						</button>
 					{/each}
@@ -114,7 +113,7 @@
 					{#if isNewVendorName}
 						<button
 							type="button"
-							class="dropdown-item add-new"
+							class="w-full flex items-center gap-[7px] px-[13px] py-[9px] bg-none border-none border-t border-t-border-soft font-sans text-[13.5px] font-semibold text-accent cursor-pointer text-left transition-[background] duration-100 hover:bg-accent-dim"
 							role="option"
 							aria-selected={false}
 							onmousedown={handleAddNew}
@@ -130,7 +129,7 @@
 		{#if configStore.selectedVendorName}
 			<button
 				type="button"
-				class="delete-btn"
+				class="w-10 h-10 flex items-center justify-center bg-none border-[1.5px] border-border rounded-[10px] text-muted cursor-pointer shrink-0 transition-[color,border-color,background] duration-[120ms] hover:text-red hover:border-red"
 				title="Delete vendor"
 				onclick={() => (vendorPendingDelete = configStore.selectedVendorName)}
 			>
@@ -140,7 +139,7 @@
 	</div>
 
 	{#if configStore.selectedVendor?.locked}
-		<p class="locked-hint" title="This vendor was saved with a different passphrase">
+		<p class="flex items-center gap-[5px] text-[11.5px] text-muted italic" title="This vendor was saved with a different passphrase">
 			<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 			Saved with a different passphrase
 		</p>
@@ -154,150 +153,3 @@
 		onCancel={() => (vendorPendingDelete = null)}
 	/>
 {/if}
-
-<style>
-	.vendor-section {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	.vendor-label {
-		display: block;
-		font-size: 12px;
-		font-weight: 700;
-		color: var(--ink-2);
-	}
-
-	.vendor-row {
-		display: flex;
-		gap: 6px;
-		align-items: flex-start;
-	}
-
-	.combobox {
-		position: relative;
-		flex: 1;
-	}
-
-	.vendor-input {
-		width: 100%;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14.5px;
-		font-weight: 500;
-		color: var(--ink);
-		background: var(--surface);
-		border: 1.5px solid var(--border);
-		border-radius: 10px;
-		padding: 10px 13px;
-		outline: none;
-		transition:
-			border-color 0.15s,
-			box-shadow 0.15s;
-		-webkit-appearance: none;
-		appearance: none;
-	}
-
-	.vendor-input::placeholder {
-		color: var(--muted);
-		font-weight: 400;
-	}
-
-	.vendor-input:focus {
-		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-dim);
-	}
-
-	.dropdown {
-		position: absolute;
-		top: calc(100% + 4px);
-		left: 0;
-		right: 0;
-		background: var(--surface);
-		border: 1.5px solid var(--border);
-		border-radius: 10px;
-		box-shadow: var(--shadow-card);
-		z-index: 50;
-		overflow: hidden;
-		max-height: 220px;
-		overflow-y: auto;
-	}
-
-	.dropdown-item {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
-		padding: 9px 13px;
-		background: none;
-		border: none;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 13.5px;
-		font-weight: 500;
-		color: var(--ink);
-		cursor: pointer;
-		text-align: left;
-		transition: background 0.1s;
-	}
-
-	.dropdown-item:hover,
-	.dropdown-item[aria-selected='true'] {
-		background: var(--accent-dim);
-	}
-
-	.dropdown-item.locked {
-		color: var(--muted);
-	}
-
-	.dropdown-item.add-new {
-		color: var(--accent);
-		gap: 7px;
-		font-weight: 600;
-		border-top: 1px solid var(--border-soft);
-	}
-
-	.item-name {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.lock-icon {
-		flex-shrink: 0;
-		color: var(--muted);
-	}
-
-	.delete-btn {
-		width: 40px;
-		height: 40px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: none;
-		border: 1.5px solid var(--border);
-		border-radius: 10px;
-		color: var(--muted);
-		cursor: pointer;
-		flex-shrink: 0;
-		transition:
-			color 0.12s,
-			border-color 0.12s,
-			background 0.12s;
-	}
-
-	.delete-btn:hover {
-		color: var(--red);
-		border-color: var(--red);
-	}
-
-	.locked-hint {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		font-size: 11.5px;
-		color: var(--muted);
-		font-style: italic;
-	}
-</style>

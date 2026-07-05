@@ -48,38 +48,54 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="backdrop" role="dialog" aria-modal="true" aria-label="Share config" tabindex="-1" onmousedown={handleBackdrop}>
-	<div class="modal">
-		<div class="modal-header">
-			<h2 class="modal-title">Share config</h2>
-			<button type="button" class="close-btn" onclick={onClose} aria-label="Close">
+<div
+	class="fixed inset-0 bg-black/45 flex items-center justify-center z-[100] backdrop-blur-[2px]"
+	role="dialog"
+	aria-modal="true"
+	aria-label="Share config"
+	tabindex="-1"
+	onmousedown={handleBackdrop}
+>
+	<div class="bg-surface border-[1.5px] border-border rounded-2xl shadow-[var(--shadow-card)] w-[360px] max-w-[calc(100vw-32px)] overflow-hidden">
+		<div class="flex items-center justify-between px-5 pt-[18px] pb-4 border-b border-b-border-soft">
+			<h2 class="text-[15px] font-bold text-ink">Share config</h2>
+			<button
+				type="button"
+				class="w-7 h-7 flex items-center justify-center bg-none border-none rounded-[6px] text-muted cursor-pointer transition-[background,color] duration-[120ms] hover:bg-surface-alt hover:text-ink"
+				onclick={onClose}
+				aria-label="Close"
+			>
 				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
 			</button>
 		</div>
 
-		<div class="modal-body">
+		<div class="p-5 flex flex-col gap-4">
 			{#if exportError}
-				<p class="export-error">{exportError}</p>
+				<p class="text-[13.5px] text-muted text-center py-3">{exportError}</p>
 			{:else}
-				<p class="share-note">
+				<p class="text-[13px] text-muted leading-[1.5]">
 					Your encrypted vendor config is embedded in the URL. Only someone with the same passphrase can decrypt it.
 				</p>
 
 				{#if qrDataUrl}
-					<div class="qr-wrap">
-						<img src={qrDataUrl} alt="QR code" width="240" height="240" />
+					<div class="flex justify-center p-3 bg-surface-alt rounded-[10px] border border-border-soft">
+						<img src={qrDataUrl} alt="QR code" width="240" height="240" class="rounded-[6px] block" />
 					</div>
 				{/if}
 
-				<div class="url-row">
+				<div class="flex gap-2">
 					<input
 						type="text"
-						class="url-input"
+						class="flex-1 font-mono text-[11px] text-ink-2 bg-surface-alt border-[1.5px] border-border rounded-lg px-3 py-[9px] outline-none overflow-hidden text-ellipsis whitespace-nowrap cursor-text transition-[border-color] duration-150 focus:border-accent"
 						readonly
 						value={shareUrl}
 						onclick={(e) => (e.target as HTMLInputElement).select()}
 					/>
-					<button type="button" class="copy-btn" class:copied onclick={copyUrl}>
+					<button
+						type="button"
+						class="w-[38px] h-[38px] flex items-center justify-center bg-surface-alt border-[1.5px] rounded-lg shrink-0 cursor-pointer transition-[background,color,border-color] duration-[120ms] hover:border-accent hover:text-accent {copied ? 'border-green text-green' : 'border-border text-muted'}"
+						onclick={copyUrl}
+					>
 						{#if copied}
 							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
 						{:else}
@@ -91,143 +107,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.backdrop {
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.45);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: 100;
-		backdrop-filter: blur(2px);
-	}
-
-	.modal {
-		background: var(--surface);
-		border: 1.5px solid var(--border);
-		border-radius: 16px;
-		box-shadow: var(--shadow-card);
-		width: 360px;
-		max-width: calc(100vw - 32px);
-		overflow: hidden;
-	}
-
-	.modal-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 18px 20px 16px;
-		border-bottom: 1px solid var(--border-soft);
-	}
-
-	.modal-title {
-		font-size: 15px;
-		font-weight: 700;
-		color: var(--ink);
-	}
-
-	.close-btn {
-		width: 28px;
-		height: 28px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: none;
-		border: none;
-		border-radius: 6px;
-		color: var(--muted);
-		cursor: pointer;
-		transition: background 0.12s, color 0.12s;
-	}
-
-	.close-btn:hover {
-		background: var(--surface-alt);
-		color: var(--ink);
-	}
-
-	.modal-body {
-		padding: 20px;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.share-note {
-		font-size: 13px;
-		color: var(--muted);
-		line-height: 1.5;
-	}
-
-	.qr-wrap {
-		display: flex;
-		justify-content: center;
-		padding: 12px;
-		background: var(--surface-alt);
-		border-radius: 10px;
-		border: 1px solid var(--border-soft);
-	}
-
-	.qr-wrap img {
-		border-radius: 6px;
-		display: block;
-	}
-
-	.url-row {
-		display: flex;
-		gap: 8px;
-	}
-
-	.url-input {
-		flex: 1;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11px;
-		color: var(--ink-2);
-		background: var(--surface-alt);
-		border: 1.5px solid var(--border);
-		border-radius: 8px;
-		padding: 9px 12px;
-		outline: none;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		cursor: text;
-	}
-
-	.url-input:focus {
-		border-color: var(--accent);
-	}
-
-	.copy-btn {
-		width: 38px;
-		height: 38px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--surface-alt);
-		border: 1.5px solid var(--border);
-		border-radius: 8px;
-		color: var(--muted);
-		cursor: pointer;
-		flex-shrink: 0;
-		transition: background 0.12s, color 0.12s, border-color 0.12s;
-	}
-
-	.copy-btn:hover {
-		border-color: var(--accent);
-		color: var(--accent);
-	}
-
-	.copy-btn.copied {
-		border-color: var(--green, #16a34a);
-		color: var(--green, #16a34a);
-	}
-
-	.export-error {
-		font-size: 13.5px;
-		color: var(--muted);
-		text-align: center;
-		padding: 12px 0;
-	}
-</style>

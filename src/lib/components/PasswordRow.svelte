@@ -34,21 +34,22 @@
 	}
 </script>
 
-<li class="pw-row" class:last-copied={isLastCopied}>
-	<span class="pw-num">{String(index + 1).padStart(2, '0')}</span>
+<li
+	class="flex items-center gap-[9px] py-[10px] border-b border-b-border-soft transition-[background] duration-100 first:pt-[2px] last:border-b-0 last:pb-[2px] {isLastCopied ? 'bg-accent-dim rounded-[6px] px-[6px] mx-[-6px]' : ''}"
+>
+	<span class="font-mono text-[10.5px] text-muted min-w-[18px] text-right shrink-0 tabular-nums select-none">{String(index + 1).padStart(2, '0')}</span>
 
-	<div class="pw-value-wrap">
+	<div class="flex-1 min-w-0 font-mono text-[13px] overflow-hidden whitespace-nowrap">
 		{#if revealed}
-			<span class="pw-full">{password}</span>
+			<span class="text-ink">{password}</span>
 		{:else}
-			<span class="pw-prefix">{prefix}</span><span class="pw-dots">{dots}</span>
+			<span class="text-ink">{prefix}</span><span class="text-muted tracking-[0.07em]">{dots}</span>
 		{/if}
 	</div>
 
-	<div class="pw-actions">
+	<div class="flex gap-[2px] shrink-0">
 		<button
-			class="icon-btn"
-			class:active={revealed}
+			class="w-7 h-7 flex items-center justify-center bg-none border-none rounded-[7px] cursor-pointer transition-[color,background] duration-[120ms] hover:bg-border-soft focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[1px] {revealed ? 'text-accent' : 'text-muted hover:text-ink-2'}"
 			title="Show / hide"
 			aria-pressed={revealed}
 			onclick={toggleReveal}
@@ -61,8 +62,7 @@
 		</button>
 
 		<button
-			class="icon-btn"
-			class:copied
+			class="w-7 h-7 flex items-center justify-center bg-none border-none rounded-[7px] cursor-pointer transition-[color,background] duration-[120ms] hover:bg-border-soft focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[1px] {copied ? 'text-green' : 'text-muted hover:text-ink-2'}"
 			title="Copy to clipboard"
 			onclick={handleCopy}
 		>
@@ -74,103 +74,3 @@
 		</button>
 	</div>
 </li>
-
-<style>
-	.pw-row {
-		display: flex;
-		align-items: center;
-		gap: 9px;
-		padding: 10px 0;
-		border-bottom: 1px solid var(--border-soft);
-		transition: background 0.1s;
-	}
-
-	.pw-row:first-child {
-		padding-top: 2px;
-	}
-
-	.pw-row:last-child {
-		border-bottom: none;
-		padding-bottom: 2px;
-	}
-
-	.pw-row.last-copied {
-		background: var(--accent-dim);
-		border-radius: 6px;
-		padding-inline: 6px;
-		margin-inline: -6px;
-	}
-
-	.pw-num {
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 10.5px;
-		color: var(--muted);
-		min-width: 18px;
-		text-align: right;
-		flex-shrink: 0;
-		font-variant-numeric: tabular-nums;
-		user-select: none;
-	}
-
-	.pw-value-wrap {
-		flex: 1;
-		min-width: 0;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 13px;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	.pw-prefix {
-		color: var(--ink);
-	}
-
-	.pw-dots {
-		color: var(--muted);
-		letter-spacing: 0.07em;
-	}
-
-	.pw-full {
-		color: var(--ink);
-	}
-
-	.pw-actions {
-		display: flex;
-		gap: 2px;
-		flex-shrink: 0;
-	}
-
-	.icon-btn {
-		width: 28px;
-		height: 28px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: none;
-		border: none;
-		border-radius: 7px;
-		color: var(--muted);
-		cursor: pointer;
-		transition:
-			color 0.12s,
-			background 0.12s;
-	}
-
-	.icon-btn:hover {
-		color: var(--ink-2);
-		background: var(--border-soft);
-	}
-
-	.icon-btn.active {
-		color: var(--accent);
-	}
-
-	.icon-btn.copied {
-		color: var(--green);
-	}
-
-	.icon-btn:focus-visible {
-		outline: 2px solid var(--accent);
-		outline-offset: 1px;
-	}
-</style>

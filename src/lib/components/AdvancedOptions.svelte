@@ -20,15 +20,14 @@
 	}
 </script>
 
-<div class="advanced-section">
+<div class="mt-3">
 	<button
 		type="button"
-		class="advanced-toggle"
-		class:open={expanded}
+		class="inline-flex items-center gap-[7px] bg-none border-none p-0 cursor-pointer font-mono text-[11.5px] font-medium text-accent tracking-[0.02em] focus-visible:outline-2 focus-visible:outline-accent focus-visible:rounded"
 		onclick={() => (expanded = !expanded)}
 	>
 		<svg
-			class="chev"
+			class="inline-block transition-transform duration-200 {expanded ? 'rotate-90' : ''}"
 			width="10"
 			height="10"
 			viewBox="0 0 24 24"
@@ -42,10 +41,10 @@
 	</button>
 
 	{#if expanded}
-		<div class="advanced-body">
-			<div class="adv-grid">
-				<div class="field">
-					<label for="passwordLength">Length</label>
+		<div class="mt-[14px] p-4 bg-surface border border-border-soft rounded-[10px] flex flex-col gap-3">
+			<div class="grid grid-cols-2 gap-3">
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-bold text-ink-2" for="passwordLength">Length</label>
 					<input
 						id="passwordLength"
 						type="number"
@@ -53,11 +52,12 @@
 						max="22"
 						value={activeVendor?.length ?? 16}
 						disabled={!activeVendor}
+						class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
 						onchange={(e) => updateSetting('length', parseInt((e.target as HTMLInputElement).value, 10))}
 					/>
 				</div>
-				<div class="field">
-					<label for="passwordCount">Count</label>
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-bold text-ink-2" for="passwordCount">Count</label>
 					<input
 						id="passwordCount"
 						type="number"
@@ -65,13 +65,14 @@
 						max="20"
 						value={activeVendor?.count ?? 5}
 						disabled={!activeVendor}
+						class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
 						onchange={(e) => updateSetting('count', parseInt((e.target as HTMLInputElement).value, 10))}
 					/>
 				</div>
 			</div>
 
-			<div class="field">
-				<label for="disallowedChars">Exclude characters</label>
+			<div class="flex flex-col gap-1.5">
+				<label class="text-xs font-bold text-ink-2" for="disallowedChars">Exclude characters</label>
 				<input
 					id="disallowedChars"
 					type="text"
@@ -80,16 +81,18 @@
 					spellcheck="false"
 					value={activeVendor?.disallowedChars ?? ''}
 					disabled={!activeVendor}
+					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
 					oninput={(e) => updateSetting('disallowedChars', (e.target as HTMLInputElement).value)}
 				/>
 			</div>
 
-			<div class="field">
-				<label for="algorithmVersion">Algorithm</label>
+			<div class="flex flex-col gap-1.5">
+				<label class="text-xs font-bold text-ink-2" for="algorithmVersion">Algorithm</label>
 				<select
 					id="algorithmVersion"
 					disabled={!activeVendor}
 					value={activeVendor?.version ?? 'v1'}
+					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
 					onchange={(e) => updateSetting('version', (e.target as HTMLSelectElement).value)}
 				>
 					<option value="v1">v1 — bash-compatible</option>
@@ -99,98 +102,3 @@
 		</div>
 	{/if}
 </div>
-
-<style>
-	.advanced-section {
-		margin-top: 12px;
-	}
-
-	.advanced-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: 7px;
-		background: none;
-		border: none;
-		padding: 0;
-		cursor: pointer;
-		font-family: 'JetBrains Mono', ui-monospace, monospace;
-		font-size: 11.5px;
-		font-weight: 500;
-		color: var(--accent);
-		letter-spacing: 0.02em;
-	}
-
-	.chev {
-		display: inline-block;
-		transition: transform 0.2s;
-	}
-
-	.advanced-toggle.open .chev {
-		transform: rotate(90deg);
-	}
-
-	.advanced-toggle:focus-visible {
-		outline: 2px solid var(--accent);
-		border-radius: 4px;
-	}
-
-	.advanced-body {
-		margin-top: 14px;
-		padding: 16px;
-		background: var(--surface);
-		border: 1px solid var(--border-soft);
-		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
-	}
-
-	.adv-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
-	}
-
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	label {
-		font-size: 12px;
-		font-weight: 700;
-		color: var(--ink-2);
-	}
-
-	select,
-	input[type='text'],
-	input[type='number'] {
-		width: 100%;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14px;
-		font-weight: 500;
-		color: var(--ink);
-		background: var(--surface);
-		border: 1.5px solid var(--border);
-		border-radius: 9px;
-		padding: 9px 12px;
-		outline: none;
-		transition:
-			border-color 0.15s,
-			box-shadow 0.15s;
-		-webkit-appearance: none;
-		appearance: none;
-	}
-
-	input:focus {
-		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-dim);
-	}
-
-	input:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
-</style>

@@ -1,4 +1,6 @@
-/* ── Light tokens ───────────────────────────── */
+@import "tailwindcss";
+
+/* ── Design tokens ──────────────────────────── */
 :root {
 	--page: #edf1fa;
 	--surface: #ffffff;
@@ -18,7 +20,6 @@
 	--shadow-btn: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* ── Dark tokens (explicit click) ──────────── */
 :root[data-theme='dark'] {
 	--page: #060a10;
 	--surface: #0d1117;
@@ -34,7 +35,6 @@
 	--shadow-btn: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
-/* ── Dark tokens (system preference) ───────── */
 @media (prefers-color-scheme: dark) {
 	:root[data-theme='system'] {
 		--page: #060a10;
@@ -52,15 +52,52 @@
 	}
 }
 
-/* ── Reset ──────────────────────────────────── */
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+/* ── Tailwind theme tokens ───────────────────── */
+@theme inline {
+	--color-page: var(--page);
+	--color-surface: var(--surface);
+	--color-surface-alt: var(--surface-alt);
+	--color-border: var(--border);
+	--color-border-soft: var(--border-soft);
+	--color-ink: var(--ink);
+	--color-ink-2: var(--ink-2);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-dim: var(--accent-dim);
+	--color-accent-hi: var(--accent-hi);
+	--color-green: var(--green);
+	--color-red: var(--red);
+	--color-red-dim: var(--red-dim);
+	--font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 
+/* ── Custom keyframes ────────────────────────── */
+@keyframes pwdpulse {
+	0%,
+	100% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 0.22;
+	}
+}
+
+@keyframes progress-bar {
+	0% {
+		left: -45%;
+	}
+	100% {
+		left: 120%;
+	}
+}
+
+/* ── Custom utilities ────────────────────────── */
+@utility animate-pwdpulse {
+	animation: pwdpulse 2.8s ease-in-out infinite;
+}
+
+/* ── Base styles ─────────────────────────────── */
 body {
 	min-height: 100svh;
 	display: flex;

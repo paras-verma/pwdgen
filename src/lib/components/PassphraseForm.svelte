@@ -5,20 +5,21 @@
 	let confirmVisible = $state(false);
 </script>
 
-<div class="passphrase-form">
-	<div class="field">
-		<label for="masterPassphrase">Master passphrase</label>
-		<div class="input-wrap">
+<div class="flex flex-col gap-4">
+	<div class="flex flex-col gap-1.5">
+		<label class="text-xs font-bold text-ink-2" for="masterPassphrase">Master passphrase</label>
+		<div class="relative">
 			<input
 				id="masterPassphrase"
 				type={passphraseVisible ? 'text' : 'password'}
 				placeholder="Your passphrase"
 				autocomplete="off"
+				class="w-full font-sans text-[14.5px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[10px] px-[13px] py-[10px] pr-10 outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)]"
 				bind:value={passphraseStore.passphrase}
 			/>
 			<button
 				type="button"
-				class="peek-btn"
+				class="absolute right-[10px] top-1/2 -translate-y-1/2 bg-none border-none text-muted cursor-pointer p-1 flex items-center transition-colors duration-[120ms] hover:text-ink-2"
 				aria-label={passphraseVisible ? 'Hide passphrase' : 'Show passphrase'}
 				onclick={() => (passphraseVisible = !passphraseVisible)}
 			>
@@ -32,21 +33,21 @@
 	</div>
 
 	{#if !passphraseStore.confirmed}
-		<div class="field">
-			<label for="confirmPassphrase">Confirm passphrase</label>
-			<div class="input-wrap">
+		<div class="flex flex-col gap-1.5">
+			<label class="text-xs font-bold text-ink-2" for="confirmPassphrase">Confirm passphrase</label>
+			<div class="relative">
 				<input
 					id="confirmPassphrase"
 					type={confirmVisible ? 'text' : 'password'}
 					placeholder="Repeat your passphrase"
 					autocomplete="off"
-					class:mismatch={passphraseStore.mismatch}
+					class="w-full font-sans text-[14.5px] font-medium text-ink bg-surface border-[1.5px] rounded-[10px] px-[13px] py-[10px] pr-10 outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:shadow-[0_0_0_3px_var(--accent-dim)] {passphraseStore.mismatch ? 'border-red shadow-[0_0_0_3px_var(--red-dim)] focus:border-red' : 'border-border focus:border-accent'}"
 					bind:value={passphraseStore.confirm}
 					onkeydown={(e) => e.key === 'Enter' && passphraseStore.confirmPassphrase()}
 				/>
 				<button
 					type="button"
-					class="peek-btn"
+					class="absolute right-[10px] top-1/2 -translate-y-1/2 bg-none border-none text-muted cursor-pointer p-1 flex items-center transition-colors duration-[120ms] hover:text-ink-2"
 					aria-label={confirmVisible ? 'Hide passphrase' : 'Show passphrase'}
 					onclick={() => (confirmVisible = !confirmVisible)}
 				>
@@ -58,13 +59,13 @@
 				</button>
 			</div>
 			{#if passphraseStore.mismatch}
-				<p class="mismatch-hint">Passphrases don't match</p>
+				<p class="text-xs text-red">Passphrases don't match</p>
 			{/if}
 		</div>
 
 		<button
 			type="button"
-			class="confirm-btn"
+			class="w-full font-sans text-[14px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-[11px] cursor-pointer transition-[background,opacity] duration-150 hover:not-disabled:bg-accent-hi disabled:opacity-50 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
 			disabled={!passphraseStore.passphrase || !passphraseStore.confirm || passphraseStore.mismatch || passphraseStore.isDerivingKey}
 			onclick={passphraseStore.confirmPassphrase}
 		>
@@ -72,115 +73,3 @@
 		</button>
 	{/if}
 </div>
-
-<style>
-	.passphrase-form {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
-
-	label {
-		font-size: 12px;
-		font-weight: 700;
-		color: var(--ink-2);
-	}
-
-	.input-wrap {
-		position: relative;
-	}
-
-	input[type='text'],
-	input[type='password'] {
-		width: 100%;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14.5px;
-		font-weight: 500;
-		color: var(--ink);
-		background: var(--surface);
-		border: 1.5px solid var(--border);
-		border-radius: 10px;
-		padding: 10px 40px 10px 13px;
-		outline: none;
-		transition:
-			border-color 0.15s,
-			box-shadow 0.15s;
-		-webkit-appearance: none;
-		appearance: none;
-	}
-
-	input::placeholder {
-		color: var(--muted);
-		font-weight: 400;
-	}
-
-	input:focus {
-		border-color: var(--accent);
-		box-shadow: 0 0 0 3px var(--accent-dim);
-	}
-
-	input.mismatch {
-		border-color: var(--red);
-		box-shadow: 0 0 0 3px var(--red-dim);
-	}
-
-	.mismatch-hint {
-		font-size: 12px;
-		color: var(--red);
-	}
-
-	.peek-btn {
-		position: absolute;
-		right: 10px;
-		top: 50%;
-		transform: translateY(-50%);
-		background: none;
-		border: none;
-		color: var(--muted);
-		cursor: pointer;
-		padding: 4px;
-		display: flex;
-		align-items: center;
-		transition: color 0.12s;
-	}
-
-	.peek-btn:hover {
-		color: var(--ink-2);
-	}
-
-	.confirm-btn {
-		width: 100%;
-		font-family: 'Manrope', system-ui, sans-serif;
-		font-size: 14px;
-		font-weight: 700;
-		color: #fff;
-		background: var(--accent);
-		border: none;
-		border-radius: 10px;
-		padding: 11px 20px;
-		cursor: pointer;
-		transition:
-			background 0.15s,
-			opacity 0.15s;
-	}
-
-	.confirm-btn:hover:not(:disabled) {
-		background: var(--accent-hi);
-	}
-
-	.confirm-btn:disabled {
-		opacity: 0.5;
-		cursor: default;
-	}
-
-	.confirm-btn:focus-visible {
-		outline: 2px solid var(--accent);
-		outline-offset: 3px;
-	}
-</style>
