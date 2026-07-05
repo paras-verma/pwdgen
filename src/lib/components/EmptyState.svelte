@@ -10,7 +10,7 @@
 		{/each}
 	</div>
 	<p class="empty-label">No passwords yet</p>
-	<p class="empty-sub">Select a vendor and generate</p>
+	<p class="empty-sub">Type a service name and generate</p>
 </div>
 
 <style>

@@ -76,7 +76,7 @@
 </script>
 
 <div class="vendor-section">
-	<label class="vendor-label" for="vendorInput">Vendor</label>
+	<label class="vendor-label" for="vendorInput">Service</label>
 	<div class="vendor-row">
 		<div class="combobox">
 			<input

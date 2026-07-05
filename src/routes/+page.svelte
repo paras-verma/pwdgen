@@ -18,6 +18,7 @@
 	let generationError = $state<string | null>(null);
 	let showShareModal = $state(false);
 	let pendingImportFragment = $state<string | null>(browser ? detectImportFragment() : null);
+	let resultsPanelEl = $state<HTMLElement | null>(null);
 
 	$effect(() => {
 		if (browser && passphraseStore.confirmed && passphraseStore.configKey) {
@@ -76,6 +77,7 @@
 				settings.version
 			);
 			await configStore.upsertVendor(vendorName, settings, passphraseStore.configKey);
+			resultsPanelEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 		} catch (error) {
 			generationError = error instanceof Error ? error.message : 'Generation failed';
 		} finally {
@@ -110,15 +112,17 @@
 			<span class="brand-text">pwdgen<em> · deterministic</em></span>
 		</div>
 		<div class="header-actions">
-			<button
-				type="button"
-				class="share-btn"
-				title="Share / export config"
-				onclick={() => (showShareModal = true)}
-			>
-				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-				<span>Share</span>
-			</button>
+			{#if passphraseStore.confirmed && configStore.vendors.length > 0}
+				<button
+					type="button"
+					class="share-btn"
+					title="Share / export config"
+					onclick={() => (showShareModal = true)}
+				>
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+					<span>Share</span>
+				</button>
+			{/if}
 			<ThemeToggle />
 		</div>
 	</header>
@@ -155,7 +159,7 @@
 			{/if}
 		</section>
 
-		<section class="results-panel" class:loading={isGenerating} aria-live="polite">
+		<section class="results-panel" class:loading={isGenerating} aria-live="polite" bind:this={resultsPanelEl}>
 			<span class="panel-label">Results</span>
 			<div class="panel-divider"></div>
 
