@@ -41,6 +41,8 @@ fileignoreconfig:
   checksum: 199e74d6e2cb6856667a09303f0ea3d81fea2d974608c1525bdacdfcc62ae26f
 - filename: src/lib/components/InfoPanel.svelte
   checksum: c4f38d4b8009ac06abe43ce6caaaeda4b4f200c08861b92742a74d2287a76c69
+- filename: .github/workflows/release.yml
+  checksum: 0a9925ef4de4a300e194418bb86977b90ed1d6451dbfe4c7c02625d277fa509e
 - filename: src/lib/crypto/configShare.ts
   checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
 - filename: src/lib/components/ShareModal.svelte

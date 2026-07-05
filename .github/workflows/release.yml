@@ -21,19 +21,24 @@ jobs:
 
       - run: npm ci
 
-      - name: Build release archive
+      - name: Build
         run: npm run build
         env:
           VITE_APP_VERSION: ${{ github.ref_name }}
 
-      - name: Package build artifact
-        id: package
+      - name: Generate single-file artifact
+        run: npm run build:single
+
+      - name: Compute SHA-256
+        id: hash
+        run: echo "sha256=$(sha256sum build/pwdgen.html | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Rename artifact with version
+        id: artifact
         run: |
-          VERSION="${{ github.ref_name }}"
-          ARCHIVE="pwdgen-${VERSION}.tar.gz"
-          tar -czf "$ARCHIVE" -C build .
-          echo "archive=$ARCHIVE" >> "$GITHUB_OUTPUT"
-          echo "sha256=$(sha256sum "$ARCHIVE" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          NAME="pwdgen-${{ github.ref_name }}.html"
+          cp build/pwdgen.html "$NAME"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
 
       - name: Build versioned path artifact
         run: npm run build
@@ -60,25 +65,24 @@ jobs:
 
             | Path | Description |
             |------|-------------|
-            | https://paras-verma.github.io/pwdgen/ | Latest version (always up to date) |
+            | https://paras-verma.github.io/pwdgen/ | Latest version |
             | https://paras-verma.github.io/pwdgen/${{ github.ref_name }}/ | This release — permanent URL |
-
-            Use the versioned URL as a bookmark if you need to stay on this specific release.
 
             ### Verify this release
 
-            Download `${{ steps.package.outputs.archive }}` from the assets below and run:
+            Download `${{ steps.artifact.outputs.name }}` from the assets below.
+            It is a single self-contained HTML file — open it directly in your browser
+            with no server required.
+
+            To verify integrity, run:
 
             ```sh
-            sha256sum ${{ steps.package.outputs.archive }}
+            sha256sum ${{ steps.artifact.outputs.name }}
             ```
 
             Expected SHA-256:
             ```
-            ${{ steps.package.outputs.sha256 }}
+            ${{ steps.hash.outputs.sha256 }}
             ```
-
-            The archive contains the complete static site. Extract it, then open
-            `404.html` in your browser or serve the directory with any static file server.
-          files: ${{ steps.package.outputs.archive }}
+          files: ${{ steps.artifact.outputs.name }}
           generate_release_notes: true

@@ -115,9 +115,17 @@
 			<div class="w-[26px] h-[26px] flex items-center justify-center bg-accent-dim rounded-[7px] text-accent">
 				<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
 			</div>
-			<span class="font-mono text-[13px] font-semibold text-ink-2 tracking-[0.03em]">
-				pwdgen<em class="not-italic text-muted font-normal max-[680px]:hidden"> · deterministic</em>
-			</span>
+			<span class="font-mono text-[13px] font-semibold text-ink-2 tracking-[0.03em]">pwdgen</span>
+			<a
+				href={releaseUrl}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="flex items-center gap-[5px] font-mono text-[11px] font-medium text-muted bg-surface-alt border border-border rounded-full px-[8px] py-[3px] leading-none transition-[color,border-color] duration-[120ms] hover:text-green hover:border-green"
+				title="Verified release v{appVersion}"
+			>
+				<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+				v{appVersion}
+			</a>
 		</div>
 		<div class="flex items-center gap-2">
 			{#if passphraseStore.confirmed && configStore.vendors.length > 0}
@@ -199,28 +207,6 @@
 		</div>
 	{/if}
 </div>
-
-<footer class="flex items-center justify-center gap-4 mt-4 max-[680px]:hidden">
-	<a
-		href={releaseUrl}
-		target="_blank"
-		rel="noopener noreferrer"
-		class="flex items-center gap-1.5 font-mono text-[11px] text-muted hover:text-ink-2 transition-colors duration-[120ms]"
-	>
-		<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="7 7 12 2 17 7"/><path d="M12 2v13"/><path d="M5 12H2a10 10 0 1 0 20 0h-3"/></svg>
-		v{appVersion}
-	</a>
-	<span class="text-border text-[11px]">·</span>
-	<a
-		href={repoUrl}
-		target="_blank"
-		rel="noopener noreferrer"
-		class="flex items-center gap-1.5 font-mono text-[11px] text-muted hover:text-ink-2 transition-colors duration-[120ms]"
-	>
-		<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-		GitHub
-	</a>
-</footer>
 
 {#if showShareModal}
 	<ShareModal onClose={() => (showShareModal = false)} />
