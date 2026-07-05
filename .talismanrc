@@ -1,16 +1,8 @@
 fileignoreconfig:
 - filename: README.md
-  checksum: 57cd7e6a06daa778b66a4e0bd0ffbfc53a52906b41a7adbc02311e7f2578089d
-- filename: generate-pass.ts
-  checksum: f662c5449c226d2f2558fac016564c2f17ecae0151b688ef7bf7028e70d4ffde
-- filename: getpwds.js
-  checksum: 854dbe41b001bdcfb441f7278e7da679da80f51d654847126c0aa95144a6f3cd
-- filename: getpwds.sh
-  checksum: 6e660aaa4bbae8ee8c6215a30b0d1ddc5881f06e7989dcd7bb20891cc871696c
-- filename: index.html
-  checksum: 9765ac00401c8df609f822069609767599f29fb17d8dc827b4a39d71e0dd09e9
-- filename: index.ts
-  checksum: 0c6383a03ac71411e9ba7d79db2705b676fee322ffe596f1fb46a0a3e7ceba9e
+  checksum: 201624452fc69b60733bb7645a5b763805422ce70293d0db9ef6910c9f70f2be
+- filename: SECURITY.md
+  checksum: 7e7f984d48d4699e8030f06fd34b2f12bb10d938c9dd98cb899e5093e066458c
 - filename: package-lock.json
   checksum: 6bba76222b9c965323d34c0334f65aa1ea248dc736e93f831cf7e73d12bcdd09
 - filename: package.json
@@ -38,9 +30,9 @@ fileignoreconfig:
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
-  checksum: 199e74d6e2cb6856667a09303f0ea3d81fea2d974608c1525bdacdfcc62ae26f
+  checksum: 528654ac7f76979999582444bc41ebc19a41f97e5d2396b8ec05eb5ca9c4ce89
 - filename: src/lib/components/InfoPanel.svelte
-  checksum: c4f38d4b8009ac06abe43ce6caaaeda4b4f200c08861b92742a74d2287a76c69
+  checksum: 83961219d88126b35ad8193b4dfc8b644c842d9f741f08dcefbcc574c5772a47
 - filename: .github/workflows/release.yml
   checksum: 0a9925ef4de4a300e194418bb86977b90ed1d6451dbfe4c7c02625d277fa509e
 - filename: src/lib/crypto/configShare.ts
@@ -54,7 +46,7 @@ fileignoreconfig:
 - filename: src/lib/components/EmptyState.svelte
   checksum: e3922e13fa8ee577ee1ef45dab2cc1b3827a650d1988648676b4012bc02f6215
 - filename: src/lib/components/PassphraseForm.svelte
-  checksum: e79e1bb91d3345797f33908bd5fe6b763ab137d664d18ec41bf00d887fb7f4ca
+  checksum: e3483402994e4b8bcf75a458f38ba78d1cad94fa3edc81d0c4d95a928d24dc1b
 - filename: src/lib/components/PasswordRow.svelte
   checksum: b339b56dc402c5f21681340ac5d73577996d4944b127b754cc6df5a3eb16b5fe
 - filename: src/lib/components/ResultsPanel.svelte
@@ -85,10 +77,4 @@ fileignoreconfig:
   checksum: 5d53cec77edce0005f4779d5538f34648c0d3efcadcda3a7d3503e212f7de0d5
 - filename: src/lib/stores/themeStore.svelte.ts
   checksum: 7df5773930485c38a32ff2367f485b11294bf333e39cd504b01f16375a4b4826
-- filename: pwd.ts
-  checksum: 1b1d72155ff244cb29065ced6041bb2878efeaa0ba4abafe85da42a81c124668
-- filename: style-guide.md
-  checksum: 8d6d122e2de951d04e1b901cbb09a65514cb80a49096dafdd6a42900116f74e5
-- filename: summary.md
-  checksum: 0ef1a3d58698c171708088d2f0ffa70be188cd54e37d2bd24e9f9565c19d9c62
 version: "1.0"

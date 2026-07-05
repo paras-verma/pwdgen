@@ -14,6 +14,7 @@
 	--accent-dim: rgba(37, 99, 235, 0.11);
 	--accent-hi: #1d4fd7;
 	--green: #16a34a;
+	--green-dim: rgba(22, 163, 74, 0.10);
 	--red: #e5484d;
 	--red-dim: rgba(229, 72, 77, 0.08);
 	--shadow-card: 0 20px 60px -24px rgba(14, 17, 22, 0.18), 0 0 0 1px rgba(14, 17, 22, 0.055);
@@ -66,6 +67,7 @@
 	--color-accent-dim: var(--accent-dim);
 	--color-accent-hi: var(--accent-hi);
 	--color-green: var(--green);
+	--color-green-dim: var(--green-dim);
 	--color-red: var(--red);
 	--color-red-dim: var(--red-dim);
 	--font-sans: 'Manrope', system-ui, -apple-system, sans-serif;

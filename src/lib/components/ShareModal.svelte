@@ -16,7 +16,7 @@
 	onMount(async () => {
 		const encoded = encodeConfigForShare();
 		if (!encoded) {
-			exportError = 'No config to export — generate at least one password first.';
+			exportError = 'No config to export. Generate at least one password first.';
 			return;
 		}
 		shareUrl = getShareUrl(encoded);

@@ -8,6 +8,7 @@
 	import ShareModal from '$lib/components/ShareModal.svelte';
 	import ImportBanner from '$lib/components/ImportBanner.svelte';
 	import InfoPanel from '$lib/components/InfoPanel.svelte';
+	import { slide } from 'svelte/transition';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { generatePasswords } from '$lib/crypto/passwordDerivation';
@@ -172,18 +173,20 @@
 				<PassphraseForm />
 
 				{#if passphraseStore.confirmed}
-					<div class="mt-6 flex flex-col gap-0">
-						<VendorDropdown configKey={passphraseStore.configKey} />
-						<AdvancedOptions />
+					<div transition:slide={{ duration: 200 }}>
+						<div class="mt-6 flex flex-col gap-0">
+							<VendorDropdown configKey={passphraseStore.configKey} />
+							<AdvancedOptions />
+						</div>
+						<button
+							type="button"
+							class="block w-full mt-4 font-sans text-[14.5px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,transform,opacity] duration-150 hover:not-disabled:bg-accent-hi active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
+							disabled={!canGenerate}
+							onclick={handleGenerate}
+						>
+							{isGenerating ? 'Generating…' : 'Generate passwords'}
+						</button>
 					</div>
-					<button
-						type="button"
-						class="block w-full mt-4 font-sans text-[14.5px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,transform,opacity] duration-150 hover:not-disabled:bg-accent-hi active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
-						disabled={!canGenerate}
-						onclick={handleGenerate}
-					>
-						{isGenerating ? 'Generating…' : 'Generate passwords'}
-					</button>
 				{/if}
 			</section>
 

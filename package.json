@@ -10,7 +10,6 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "build:cli": "npx esbuild index.ts --bundle --outfile=node.js --platform=node --target=node18",
     "build:single": "node scripts/single-file.mjs"
   },
   "devDependencies": {
@@ -25,7 +24,6 @@
     "jsdom": "29.1.1",
     "svelte": "5.56.4",
     "svelte-check": "4.7.1",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vite": "6.4.3",
     "vitest": "4.1.9"

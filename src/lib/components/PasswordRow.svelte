@@ -35,7 +35,7 @@
 </script>
 
 <li
-	class="flex items-center gap-[9px] py-[10px] border-b border-b-border-soft transition-[background] duration-100 first:pt-[2px] last:border-b-0 last:pb-[2px] {isLastCopied ? 'bg-accent-dim rounded-[6px] px-[6px] mx-[-6px]' : ''}"
+	class="flex items-center gap-[9px] py-[10px] border-b border-b-border-soft transition-[background,box-shadow] duration-200 ease-out first:pt-[2px] last:border-b-0 last:pb-[2px] {isLastCopied ? 'bg-accent-dim rounded-[6px] px-[6px] mx-[-6px] shadow-[inset_-3px_0_0_var(--accent)]' : ''}"
 >
 	<span class="font-mono text-[10.5px] text-muted min-w-[18px] text-right shrink-0 tabular-nums select-none">{String(index + 1).padStart(2, '0')}</span>
 

@@ -95,8 +95,8 @@
 					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
 					onchange={(e) => updateSetting('version', (e.target as HTMLSelectElement).value)}
 				>
-					<option value="v1">v1 — bash-compatible</option>
-					<option value="v2">v2 — custom alphabet</option>
+					<option value="v1">v1 (bash-compatible)</option>
+					<option value="v2">v2 (custom alphabet)</option>
 				</select>
 			</div>
 		</div>
