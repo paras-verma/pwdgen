@@ -20,7 +20,7 @@ fileignoreconfig:
 - filename: .gitignore
   checksum: 755de56b3622291b869eb30baddb3c5cef77936bd60d2f50e6d05b74d1258655
 - filename: .talismanrc
-  checksum: ded678fb5df24315e47ad5a053bf0dea223542683ab3f1ad643b2cb8f1f0bfb7
+  checksum: 0480daa0c9f4fe7d39bba000f2ddb05de2c99084ffa0b945dea79a6755e54e72
 - filename: svelte.config.js
   checksum: 57261cf5d47cb20d7ec0cb8184bfb8257f5a6bb0bd1b9a14d48fc5d7b69e309d
 - filename: tsconfig.cli.json
@@ -38,7 +38,7 @@ fileignoreconfig:
 - filename: src/routes/+layout.svelte
   checksum: cd5be7c63cf45c6c01b3728226293d862f88c106b2b1e827f7caa2b278c5dcf4
 - filename: src/routes/+page.svelte
-  checksum: 6d0606f41564608acd59d38733de2cab4d33dd847fb89a52efd21401bed9338a
+  checksum: 78c36efc8be4190a559f7452534ee2941fb1d4e2fbb31d4a297b29817d863e38
 - filename: src/lib/crypto/configShare.ts
   checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
 - filename: src/lib/components/ShareModal.svelte
@@ -64,7 +64,13 @@ fileignoreconfig:
 - filename: src/lib/crypto/configStorage.ts
   checksum: 8b51f41e85d1b222e26e1be1f544a1460e56696b00a9d5eb2f1a73da0230b9be
 - filename: src/lib/crypto/passwordDerivation.ts
-  checksum: dd1727e459ace847d3c9fc866c6c26ab2cc7da11effc6ce100ace811bbb48501
+  checksum: 2c082b80ed4b6bae8cd8c9a19762b37101f43035b355884f3a4a3d2d60c4480b
+- filename: src/lib/crypto/algo/shared.ts
+  checksum: a2edf4954a69c75daf7ad1019cea5c50b5e72b68378ac0f7f4e853257c34a15b
+- filename: src/lib/crypto/algo/v1.ts
+  checksum: 34189ab7391cc84c2e7fc949723c110de4b1c5aff3045991f58c13ec5b497ebe
+- filename: src/lib/crypto/algo/v2.ts
+  checksum: 350333d31c32a04731f6d721b3ea9f0614c05c46fa89dfd64f2f4f3174020e51
 - filename: src/lib/stores/configStore.svelte.ts
   checksum: c124231684997dc031cb31cd7008fcee8f512ee9b6be4e26d6ecd6dd7a2a3f95
 - filename: src/lib/stores/passphraseStore.svelte.ts

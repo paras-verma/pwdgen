@@ -9,11 +9,11 @@
 	import ImportBanner from '$lib/components/ImportBanner.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
-	import { generatePasswords, type AlgorithmMode } from '$lib/crypto/passwordDerivation';
+	import { generatePasswords, type AlgorithmVersion } from '$lib/crypto/passwordDerivation';
 	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
-	let algorithmMode = $state<AlgorithmMode>('legacy');
+	let algorithmVersion = $state<AlgorithmVersion>('v1');
 	let generatedPasswords = $state<string[]>([]);
 	let isGenerating = $state(false);
 	let generationError = $state<string | null>(null);
@@ -73,7 +73,7 @@
 				settings.count,
 				settings.length,
 				settings.disallowedChars,
-				algorithmMode
+				algorithmVersion
 			);
 			await configStore.upsertVendor(vendorName, settings, passphraseStore.configKey);
 		} catch (error) {
@@ -143,8 +143,8 @@
 				<div class="vendor-advanced">
 					<VendorDropdown configKey={passphraseStore.configKey} />
 					<AdvancedOptions
-						{algorithmMode}
-						onAlgorithmModeChange={(mode) => (algorithmMode = mode)}
+						{algorithmVersion}
+						onAlgorithmVersionChange={(version) => (algorithmVersion = version)}
 					/>
 				</div>
 				<button

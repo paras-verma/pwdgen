@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
-	import type { AlgorithmMode } from '$lib/crypto/passwordDerivation';
+	import type { AlgorithmVersion } from '$lib/crypto/passwordDerivation';
 
 	interface Props {
-		algorithmMode: AlgorithmMode;
-		onAlgorithmModeChange: (mode: AlgorithmMode) => void;
+		algorithmVersion: AlgorithmVersion;
+		onAlgorithmVersionChange: (version: AlgorithmVersion) => void;
 	}
 
-	let { algorithmMode, onAlgorithmModeChange }: Props = $props();
+	let { algorithmVersion, onAlgorithmVersionChange }: Props = $props();
 
 	let expanded = $state(false);
 
@@ -94,22 +94,24 @@
 
 			<div class="mode-toggle-row">
 				<span class="mode-label">Algorithm</span>
-				<div class="mode-toggle" role="group" aria-label="Algorithm mode">
+				<div class="mode-toggle" role="group" aria-label="Algorithm version">
 					<button
 						type="button"
 						class="mode-btn"
-						class:active={algorithmMode === 'legacy'}
-						onclick={() => onAlgorithmModeChange('legacy')}
+						class:active={algorithmVersion === 'v1'}
+						title="v1 — bash-compatible, base64 output"
+						onclick={() => onAlgorithmVersionChange('v1')}
 					>
-						Legacy
+						v1
 					</button>
 					<button
 						type="button"
 						class="mode-btn"
-						class:active={algorithmMode === 'latest'}
-						onclick={() => onAlgorithmModeChange('latest')}
+						class:active={algorithmVersion === 'v2'}
+						title="v2 — custom alphabet, handles excluded chars reliably"
+						onclick={() => onAlgorithmVersionChange('v2')}
 					>
-						Latest
+						v2
 					</button>
 				</div>
 			</div>
