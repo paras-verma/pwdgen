@@ -1,27 +1,29 @@
-name: Deploy to GitHub Pages
+name: Release
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
-  group: pages
+  group: release
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  release:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
@@ -33,14 +35,52 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Get version
+      - name: Determine bump type
+        id: bump
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if echo "$COMMIT_MSG" | grep -qiE '\[bump major\]'; then
+            echo "type=major" >> "$GITHUB_OUTPUT"
+          elif echo "$COMMIT_MSG" | grep -qiE '\[bump minor\]'; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version
         id: version
-        run: echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '1.0.0')" >> "$GITHUB_OUTPUT"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          RAW=$(npm version ${{ steps.bump.outputs.type }} --no-git-tag-version)
+          echo "tag=${RAW#v}" >> "$GITHUB_OUTPUT"
 
       - name: Build
         run: pnpm run build
         env:
           VITE_APP_VERSION: ${{ steps.version.outputs.tag }}
+
+      - name: Generate single-file artifact
+        run: pnpm run build:single
+
+      - name: Hash
+        id: hash
+        run: echo "sha256=$(sha256sum build/pwdgen.html | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare artifact
+        id: artifact
+        run: |
+          NAME="pwdgen-v${{ steps.version.outputs.tag }}.html"
+          cp build/pwdgen.html "$NAME"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Commit, tag and push
+        run: |
+          git add package.json
+          git commit -m "chore: release v${{ steps.version.outputs.tag }} [skip ci]"
+          git tag "v${{ steps.version.outputs.tag }}"
+          git push origin main --follow-tags
 
       - uses: actions/configure-pages@v5
 
@@ -48,6 +88,29 @@ jobs:
         with:
           path: build
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.tag }}
+          name: v${{ steps.version.outputs.tag }}
+          body: |
+            Built from commit [`${{ github.sha }}`](https://github.com/paras-verma/pwdgen/commit/${{ github.sha }}).
+
+            ### Verify this release
+
+            Download `${{ steps.artifact.outputs.name }}` and run:
+
+            ```sh
+            sha256sum ${{ steps.artifact.outputs.name }}
+            ```
+
+            Expected SHA-256:
+            ```
+            ${{ steps.hash.outputs.sha256 }}
+            ```
+          files: ${{ steps.artifact.outputs.name }}
+          generate_release_notes: true

@@ -8,7 +8,7 @@ fileignoreconfig:
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
-  checksum: e17e7d1f1e8f63193cdb91efc6c2feabd1f82c362e27fd3a6c6f280dd7261bb0
+  checksum: 5e337ae9ad71eb2e94fe77846875837ce5ba3ed0bc3084115bf685b43fa05a82
 - filename: .gitignore
   checksum: 755de56b3622291b869eb30baddb3c5cef77936bd60d2f50e6d05b74d1258655
 - filename: .talismanrc
@@ -33,8 +33,6 @@ fileignoreconfig:
   checksum: 528654ac7f76979999582444bc41ebc19a41f97e5d2396b8ec05eb5ca9c4ce89
 - filename: src/lib/components/InfoPanel.svelte
   checksum: 83961219d88126b35ad8193b4dfc8b644c842d9f741f08dcefbcc574c5772a47
-- filename: .github/workflows/release.yml
-  checksum: 0a9925ef4de4a300e194418bb86977b90ed1d6451dbfe4c7c02625d277fa509e
 - filename: src/lib/crypto/configShare.ts
   checksum: 99ddfc782db9702742b34f5736bbd825a8b254d18aac104fd56b9eaf8288ed18
 - filename: src/lib/components/ShareModal.svelte

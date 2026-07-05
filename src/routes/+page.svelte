@@ -16,7 +16,7 @@
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
 	const appVersion: string = import.meta.env.VITE_APP_VERSION;
-	const releaseUrl = 'https://github.com/paras-verma/pwdgen/releases';
+	const releaseUrl = `https://github.com/paras-verma/pwdgen/releases/tag/v${appVersion}`;
 	const repoUrl = 'https://github.com/paras-verma/pwdgen';
 
 	let showInfo = $state(false);
