@@ -81,13 +81,6 @@ jobs:
           cp build/pwdgen.html "$NAME"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Commit, tag and push
-        run: |
-          git add package.json
-          git commit -m "chore: release v${{ steps.version.outputs.tag }} [skip ci]"
-          git tag "v${{ steps.version.outputs.tag }}"
-          git push origin main --follow-tags
-
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
@@ -96,7 +89,14 @@ jobs:
 
       - name: Deploy to GitHub Pages
         id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+      - name: Commit, tag and push
+        run: |
+          git add package.json
+          git commit -m "chore: release v${{ steps.version.outputs.tag }} [skip ci]"
+          git tag "v${{ steps.version.outputs.tag }}"
+          git push origin main --follow-tags
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
