@@ -17,11 +17,11 @@ function createConfigStore() {
 		vendors.find((v) => v.name === selectedVendorName) ?? null
 	);
 
-	async function loadFromStorage(configKey: CryptoKey) {
+	async function loadFromStorage(configKey: CryptoKey, passphrase: string) {
 		if (!browser) return;
 		isLoading = true;
 		try {
-			vendors = await loadVendors(configKey);
+			vendors = await loadVendors(configKey, passphrase);
 		} finally {
 			isLoading = false;
 		}
@@ -40,7 +40,7 @@ function createConfigStore() {
 	}
 
 	async function removeVendor(name: string) {
-		deleteVendor(name);
+		await deleteVendor(name);
 		vendors = vendors.filter((v) => v.name !== name);
 		if (selectedVendorName === name) {
 			selectedVendorName = vendors.length > 0 ? vendors[0].name : null;
@@ -57,7 +57,6 @@ function createConfigStore() {
 
 		const updatedSettings: VendorSettings = {
 			length: vendor.length,
-			count: vendor.count,
 			disallowedChars: vendor.disallowedChars,
 			lastCopiedIndex: vendor.lastCopiedIndex,
 			version: vendor.version,
@@ -97,18 +96,10 @@ function createConfigStore() {
 	}
 
 	return {
-		get vendors() {
-			return vendors;
-		},
-		get selectedVendorName() {
-			return selectedVendorName;
-		},
-		get selectedVendor() {
-			return selectedVendor;
-		},
-		get isLoading() {
-			return isLoading;
-		},
+		get vendors() { return vendors; },
+		get selectedVendorName() { return selectedVendorName; },
+		get selectedVendor() { return selectedVendor; },
+		get isLoading() { return isLoading; },
 		loadFromStorage,
 		addVendor,
 		removeVendor,

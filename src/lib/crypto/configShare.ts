@@ -1,4 +1,5 @@
-const CONFIG_STORAGE_KEY = 'pwdgen-config';
+import { CONFIG_STORAGE_KEY, setPendingImport } from './configStorage';
+import { trustStore } from '$lib/stores/trustStore.svelte';
 
 export function encodeConfigForShare(): string | null {
 	const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
@@ -21,8 +22,12 @@ export function importEncodedConfig(encoded: string): void {
 		const padded = encoded.replace(/-/g, '+').replace(/_/g, '/');
 		const padding = (4 - (padded.length % 4)) % 4;
 		const json = atob(padded + '='.repeat(padding));
-		JSON.parse(json); // validate it's parseable JSON
-		localStorage.setItem(CONFIG_STORAGE_KEY, json);
+		const parsed = JSON.parse(json);
+		if (!trustStore.trusted) {
+			setPendingImport(parsed);
+		} else {
+			localStorage.setItem(CONFIG_STORAGE_KEY, json);
+		}
 	} catch {
 		throw new Error('Invalid config data in URL');
 	}

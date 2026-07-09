@@ -39,19 +39,21 @@ export async function generateV3(
 	passphrase: string,
 	count: number,
 	length: number,
-	disallowedChars: string
+	disallowedChars: string,
+	startIndex = 0
 ): Promise<string[]> {
 	const alphabet = buildAlphabet(disallowedChars);
+	const need = startIndex + count;
 	const passwords: string[] = [];
 	let slot = 0;
 	let round = 0;
 	let buf: number[] = [];
 
-	while (passwords.length < count) {
+	while (passwords.length < need) {
 		if (slot + length > buf.length) {
 			if (round >= MAX_ROUNDS) {
 				throw new Error(
-					`Only found ${passwords.length} of ${count} passwords within ${MAX_ROUNDS} rounds. ` +
+					`Only found ${passwords.length - startIndex} of ${count} passwords within ${MAX_ROUNDS} rounds. ` +
 						`Try a longer length or fewer excluded characters.`
 				);
 			}
@@ -70,5 +72,5 @@ export async function generateV3(
 		}
 	}
 
-	return passwords;
+	return passwords.slice(startIndex);
 }

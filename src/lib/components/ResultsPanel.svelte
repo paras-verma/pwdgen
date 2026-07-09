@@ -15,9 +15,9 @@
 
 {#if errorMessage}
 	<div class="mt-[2px] px-3 py-[10px] bg-red-dim border border-[rgba(229,72,77,0.22)] rounded-[9px] text-[12.5px] text-red leading-[1.4]">{errorMessage}</div>
-{:else if isGenerating || passwords.length === 0}
+{:else if isGenerating && passwords.length === 0}
 	<EmptyState />
-{:else}
+{:else if passwords.length > 0}
 	<ul class="list-none flex flex-col">
 		{#each passwords as password, index}
 			<PasswordRow
@@ -28,4 +28,6 @@
 			/>
 		{/each}
 	</ul>
+{:else}
+	<EmptyState />
 {/if}
