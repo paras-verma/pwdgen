@@ -7,12 +7,13 @@ export type AlgorithmVersion = 'v1' | 'v2' | 'v3';
 export async function generatePasswords(
 	vendorName: string,
 	passphrase: string,
-	count = 5,
 	length = 16,
 	disallowedChars = '',
-	version: AlgorithmVersion = 'v3'
+	version: AlgorithmVersion = 'v3',
+	startIndex = 0
 ): Promise<string[]> {
-	if (version === 'v1') return generateV1(vendorName, passphrase, count, length, disallowedChars);
-	if (version === 'v2') return generateV2(vendorName, passphrase, count, length, disallowedChars);
-	return generateV3(vendorName, passphrase, count, length, disallowedChars);
+	const count = 5;
+	if (version === 'v1') return generateV1(vendorName, passphrase, count, length, disallowedChars, startIndex);
+	if (version === 'v2') return generateV2(vendorName, passphrase, count, length, disallowedChars, startIndex);
+	return generateV3(vendorName, passphrase, count, length, disallowedChars, startIndex);
 }

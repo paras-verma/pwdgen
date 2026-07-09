@@ -9,17 +9,18 @@
 	import ImportBanner from '$lib/components/ImportBanner.svelte';
 	import InfoPanel from '$lib/components/InfoPanel.svelte';
 	import { slide } from 'svelte/transition';
+	import { tick } from 'svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 	import { configStore } from '$lib/stores/configStore.svelte';
+	import { trustStore } from '$lib/stores/trustStore.svelte';
+	import { sessionSettingsStore } from '$lib/stores/sessionSettingsStore.svelte';
 	import { generatePasswords } from '$lib/crypto/passwordDerivation';
-	import { DEFAULT_VENDOR_SETTINGS, type VendorSettings } from '$lib/crypto/configStorage';
 	import { detectImportFragment } from '$lib/crypto/configShare';
 
 	const appVersion: string = import.meta.env.VITE_APP_VERSION;
 	const releaseUrl = `https://github.com/paras-verma/pwdgen/releases/tag/v${appVersion}`;
 	const attestationUrl: string = import.meta.env.VITE_ATTESTATION_URL;
 	const versionUrl = attestationUrl || releaseUrl;
-	const repoUrl = 'https://github.com/paras-verma/pwdgen';
 
 	let showInfo = $state(false);
 	let generatedPasswords = $state<string[]>([]);
@@ -27,66 +28,106 @@
 	let generationError = $state<string | null>(null);
 	let showShareModal = $state(false);
 	let pendingImportFragment = $state<string | null>(browser ? detectImportFragment() : null);
-	let resultsPanelEl = $state<HTMLElement | null>(null);
+	let siteName = $state('');
+	let baseOffset = $state(0);
+	let nextOffset = $state(0);
+	let scrollContainer: HTMLDivElement | null = null;
 
 	$effect(() => {
 		if (browser && passphraseStore.confirmed && passphraseStore.configKey) {
-			configStore.loadFromStorage(passphraseStore.configKey);
+			configStore.loadFromStorage(passphraseStore.configKey, passphraseStore.passphrase);
 		}
 	});
 
 	$effect(() => {
 		if (!passphraseStore.confirmed) {
 			configStore.reset();
+			sessionSettingsStore.reset();
 			generatedPasswords = [];
 			generationError = null;
+			baseOffset = 0;
+			nextOffset = 0;
 		}
 	});
 
 	const activeVendor = $derived(
-		configStore.selectedVendor && !configStore.selectedVendor.locked
+		trustStore.trusted && configStore.selectedVendor && !configStore.selectedVendor.locked
 			? configStore.selectedVendor
 			: null
 	);
 
+	const effectiveVendorName = $derived(
+		trustStore.trusted ? (configStore.selectedVendorName ?? '') : siteName.trim()
+	);
+
 	const canGenerate = $derived(
 		passphraseStore.confirmed &&
-		!!configStore.selectedVendorName &&
-		!configStore.selectedVendor?.locked &&
+		effectiveVendorName.length > 0 &&
+		!(trustStore.trusted && configStore.selectedVendor?.locked) &&
 		!isGenerating
 	);
 
+	const settings = $derived(
+		activeVendor
+			? { length: activeVendor.length, disallowedChars: activeVendor.disallowedChars, version: activeVendor.version }
+			: { length: sessionSettingsStore.length, disallowedChars: sessionSettingsStore.disallowedChars, version: sessionSettingsStore.version }
+	);
+
+	const lastCopiedDisplayIndex = $derived(
+		activeVendor?.lastCopiedIndex != null
+			? activeVendor.lastCopiedIndex - baseOffset
+			: null
+	);
+
 	async function handleGenerate() {
-		const vendorName = configStore.selectedVendorName;
-		if (!passphraseStore.confirmed || !passphraseStore.configKey || !vendorName || isGenerating) return;
+		if (!passphraseStore.confirmed || !effectiveVendorName || isGenerating) return;
 
-		const existingVendor = configStore.selectedVendor;
-		const settings: VendorSettings =
-			existingVendor && !existingVendor.locked
-				? {
-						count: existingVendor.count,
-						length: existingVendor.length,
-						disallowedChars: existingVendor.disallowedChars,
-						lastCopiedIndex: existingVendor.lastCopiedIndex,
-						version: existingVendor.version
-					}
-				: { ...DEFAULT_VENDOR_SETTINGS };
+		const start = activeVendor?.lastCopiedIndex != null
+			? Math.max(0, activeVendor.lastCopiedIndex - 3)
+			: 0;
 
+		baseOffset = start;
+		nextOffset = start + 5;
 		isGenerating = true;
 		generationError = null;
 		generatedPasswords = [];
 
 		try {
 			generatedPasswords = await generatePasswords(
-				vendorName,
+				effectiveVendorName,
 				passphraseStore.passphrase,
-				settings.count,
 				settings.length,
 				settings.disallowedChars,
-				settings.version
+				settings.version,
+				start
 			);
-			await configStore.upsertVendor(vendorName, settings, passphraseStore.configKey);
-			resultsPanelEl?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+			if (trustStore.trusted && passphraseStore.configKey) {
+				await configStore.upsertVendor(effectiveVendorName, { ...settings, lastCopiedIndex: activeVendor?.lastCopiedIndex ?? null }, passphraseStore.configKey);
+			}
+		} catch (error) {
+			generationError = error instanceof Error ? error.message : 'Generation failed';
+		} finally {
+			isGenerating = false;
+		}
+	}
+
+	async function handleGenerateMore() {
+		if (!passphraseStore.confirmed || !effectiveVendorName || isGenerating) return;
+		const prevCount = generatedPasswords.length;
+		isGenerating = true;
+		try {
+			const more = await generatePasswords(
+				effectiveVendorName,
+				passphraseStore.passphrase,
+				settings.length,
+				settings.disallowedChars,
+				settings.version,
+				nextOffset
+			);
+			generatedPasswords = [...generatedPasswords, ...more];
+			nextOffset += 5;
+			await tick();
+			if (scrollContainer) scrollContainer.scrollTop = scrollContainer.scrollHeight;
 		} catch (error) {
 			generationError = error instanceof Error ? error.message : 'Generation failed';
 		} finally {
@@ -102,13 +143,15 @@
 		generationError = null;
 	}
 
-	async function handleCopyAtIndex(index: number) {
-		if (!activeVendor || !passphraseStore.configKey) return;
-		await configStore.updateVendorSettings(
-			activeVendor.name,
-			{ lastCopiedIndex: index },
-			passphraseStore.configKey
-		);
+	async function handleCopyAtIndex(displayIndex: number) {
+		const absoluteIndex = baseOffset + displayIndex;
+		if (trustStore.trusted && activeVendor && passphraseStore.configKey) {
+			await configStore.updateVendorSettings(
+				activeVendor.name,
+				{ lastCopiedIndex: absoluteIndex },
+				passphraseStore.configKey
+			);
+		}
 	}
 </script>
 
@@ -131,7 +174,7 @@
 			</a>
 		</div>
 		<div class="flex items-center gap-2">
-			{#if passphraseStore.confirmed && configStore.vendors.length > 0}
+			{#if passphraseStore.confirmed && trustStore.trusted && configStore.vendors.length > 0}
 				<button
 					type="button"
 					class="flex items-center gap-1.5 font-sans text-[12.5px] font-semibold text-muted bg-none border-[1.5px] border-border rounded-lg py-[5px] px-[11px] cursor-pointer transition-[color,border-color] duration-[120ms] hover:text-accent hover:border-accent max-[680px]:px-2"
@@ -177,8 +220,25 @@
 				{#if passphraseStore.confirmed}
 					<div transition:slide={{ duration: 200 }}>
 						<div class="mt-6 flex flex-col gap-0">
-							<VendorDropdown configKey={passphraseStore.configKey} />
-							<AdvancedOptions />
+							{#if trustStore.trusted}
+								<VendorDropdown configKey={passphraseStore.configKey} />
+								<AdvancedOptions />
+							{:else}
+								<div class="flex flex-col gap-1.5 mb-3">
+									<label class="text-xs font-bold text-ink-2" for="siteName">Site / service</label>
+									<input
+										id="siteName"
+										type="text"
+										placeholder="e.g. github.com"
+										autocomplete="off"
+										spellcheck="false"
+										bind:value={siteName}
+										class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[10px] px-[13px] py-[10px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)]"
+										onkeydown={(e) => e.key === 'Enter' && canGenerate && handleGenerate()}
+									/>
+								</div>
+								<AdvancedOptions />
+							{/if}
 						</div>
 						<button
 							type="button"
@@ -193,21 +253,35 @@
 			</section>
 
 			<section
-				class="results-section order-2 bg-surface-alt px-7 py-8 flex flex-col transition-[background,border-color] duration-[250ms] max-[680px]:order-2 max-[680px]:px-[22px] max-[680px]:py-6 max-[680px]:min-h-[260px]"
+				class="results-section order-2 bg-surface-alt relative transition-[background,border-color] duration-[250ms] max-[680px]:order-2 max-[680px]:min-h-[260px]"
 				class:loading={isGenerating}
 				aria-live="polite"
-				bind:this={resultsPanelEl}
 			>
-				<span class="font-mono text-[10.5px] font-semibold uppercase tracking-[0.15em] text-muted">Results</span>
-				<div class="divider h-px my-[14px] bg-border relative overflow-hidden"></div>
+				<div class="absolute inset-0 px-7 py-10 flex flex-col max-[680px]:px-[22px] max-[680px]:py-6">
+					<span class="font-mono text-[10.5px] font-semibold uppercase tracking-[0.15em] text-muted">Results</span>
+					<div class="divider h-px my-[14px] bg-border relative overflow-hidden"></div>
 
-				<ResultsPanel
-					passwords={generatedPasswords}
-					{isGenerating}
-					errorMessage={generationError}
-					lastCopiedIndex={activeVendor?.lastCopiedIndex ?? null}
-					onCopy={handleCopyAtIndex}
-				/>
+					<div bind:this={scrollContainer} class="flex-1 min-h-0 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]">
+						<ResultsPanel
+							passwords={generatedPasswords}
+							{isGenerating}
+							errorMessage={generationError}
+							lastCopiedIndex={lastCopiedDisplayIndex}
+							onCopy={handleCopyAtIndex}
+						/>
+					</div>
+
+					{#if generatedPasswords.length > 0}
+						<button
+							type="button"
+							class="mt-3 w-full font-sans text-[14px] font-bold text-ink-2 bg-surface border-[1.5px] border-border rounded-[10px] px-5 py-3 cursor-pointer tracking-[0.01em] transition-[background,border-color,color,transform,opacity] duration-150 hover:not-disabled:border-accent hover:not-disabled:text-accent active:not-disabled:translate-y-px disabled:opacity-55 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
+							disabled={isGenerating}
+							onclick={handleGenerateMore}
+						>
+							{isGenerating ? 'Generating…' : '+ 5 more'}
+						</button>
+					{/if}
+				</div>
 			</section>
 		</div>
 	{/if}

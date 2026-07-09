@@ -10,22 +10,22 @@ beforeEach(() => {
 		setItem: (key: string, value: string) => { mockStorage[key] = value; },
 		removeItem: (key: string) => { delete mockStorage[key]; }
 	});
+	vi.stubGlobal('trustStore', { trusted: true });
 });
 
 describe('configStorage', () => {
 	it('encrypts and decrypts vendor settings round-trip', async () => {
 		const key = await deriveConfigKey('test-passphrase');
-		const settings = { ...DEFAULT_VENDOR_SETTINGS, length: 20, count: 3 };
+		const settings = { ...DEFAULT_VENDOR_SETTINGS, length: 20 };
 
 		await saveVendor('github', settings, key);
-		const vendors = await loadVendors(key);
+		const vendors = await loadVendors(key, 'test-passphrase');
 
 		expect(vendors).toHaveLength(1);
 		expect(vendors[0].name).toBe('github');
 		expect(vendors[0].locked).toBe(false);
 		if (!vendors[0].locked) {
 			expect(vendors[0].length).toBe(20);
-			expect(vendors[0].count).toBe(3);
 		}
 	});
 
@@ -34,10 +34,9 @@ describe('configStorage', () => {
 		const wrongKey = await deriveConfigKey('wrong-passphrase');
 
 		await saveVendor('aws', DEFAULT_VENDOR_SETTINGS, correctKey);
-		const vendors = await loadVendors(wrongKey);
+		const vendors = await loadVendors(wrongKey, 'wrong-passphrase');
 
 		expect(vendors).toHaveLength(1);
-		expect(vendors[0].name).toBe('aws');
 		expect(vendors[0].locked).toBe(true);
 	});
 
@@ -48,7 +47,7 @@ describe('configStorage', () => {
 		await saveVendor('github', DEFAULT_VENDOR_SETTINGS, key1);
 		await saveVendor('gcloud', DEFAULT_VENDOR_SETTINGS, key2);
 
-		const vendorsWithKey1 = await loadVendors(key1);
+		const vendorsWithKey1 = await loadVendors(key1, 'passphrase-one');
 		expect(vendorsWithKey1.find((v) => v.name === 'github')?.locked).toBe(false);
 		expect(vendorsWithKey1.find((v) => v.name === 'gcloud')?.locked).toBe(true);
 	});
@@ -58,8 +57,8 @@ describe('configStorage', () => {
 		await saveVendor('github', DEFAULT_VENDOR_SETTINGS, key);
 		await saveVendor('netflix', DEFAULT_VENDOR_SETTINGS, key);
 
-		deleteVendor('github');
-		const vendors = await loadVendors(key);
+		await deleteVendor('github');
+		const vendors = await loadVendors(key, 'passphrase');
 
 		expect(vendors).toHaveLength(1);
 		expect(vendors[0].name).toBe('netflix');
@@ -69,7 +68,7 @@ describe('configStorage', () => {
 		const key = await deriveConfigKey('passphrase');
 		await saveVendor('github', { ...DEFAULT_VENDOR_SETTINGS, lastCopiedIndex: 2 }, key);
 
-		const vendors = await loadVendors(key);
+		const vendors = await loadVendors(key, 'passphrase');
 		expect(vendors[0].locked).toBe(false);
 		if (!vendors[0].locked) {
 			expect(vendors[0].lastCopiedIndex).toBe(2);

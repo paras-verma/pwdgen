@@ -32,14 +32,16 @@ export async function generateV2(
 	passphrase: string,
 	count: number,
 	length: number,
-	disallowedChars: string
+	disallowedChars: string,
+	startIndex = 0
 ): Promise<string[]> {
+	const need = startIndex + count;
 	const passwords: string[] = [];
 	const alphabet = buildAlphabet(disallowedChars);
 	let iterations = START_ITERATIONS;
 	let attempts = 0;
 
-	while (passwords.length < count && attempts < MAX_ATTEMPTS) {
+	while (passwords.length < need && attempts < MAX_ATTEMPTS) {
 		attempts++;
 		const plaintext = new TextEncoder().encode(vendorName + '\n');
 		const keyMaterial = await deriveKeyMaterial(passphrase, iterations);
@@ -50,11 +52,11 @@ export async function generateV2(
 		passwords.push(candidate);
 	}
 
-	if (passwords.length < count) {
+	if (passwords.length < need) {
 		throw new Error(
-			`Only found ${passwords.length} of ${count} passwords within ${MAX_ATTEMPTS} attempts. ` +
+			`Only found ${passwords.length - startIndex} of ${count} passwords within ${MAX_ATTEMPTS} attempts. ` +
 				`Try a longer length or fewer excluded characters.`
 		);
 	}
-	return passwords;
+	return passwords.slice(startIndex);
 }

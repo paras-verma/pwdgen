@@ -1,22 +1,31 @@
 <script lang="ts">
 	import { configStore } from '$lib/stores/configStore.svelte';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
+	import { trustStore } from '$lib/stores/trustStore.svelte';
+	import { sessionSettingsStore } from '$lib/stores/sessionSettingsStore.svelte';
+	import type { AlgorithmVersion } from '$lib/crypto/passwordDerivation';
 
 	let expanded = $state(false);
 
 	const activeVendor = $derived(
-		configStore.selectedVendor && !configStore.selectedVendor.locked
+		trustStore.trusted && configStore.selectedVendor && !configStore.selectedVendor.locked
 			? configStore.selectedVendor
 			: null
 	);
 
-	async function updateSetting(field: 'length' | 'count' | 'disallowedChars' | 'version', value: string | number) {
-		if (!activeVendor || !passphraseStore.configKey) return;
-		await configStore.updateVendorSettings(
-			activeVendor.name,
-			{ [field]: value },
-			passphraseStore.configKey
-		);
+	const isDisabled = $derived(trustStore.trusted && !activeVendor);
+	const currentLength = $derived(activeVendor?.length ?? sessionSettingsStore.length);
+	const currentDisallowedChars = $derived(activeVendor?.disallowedChars ?? sessionSettingsStore.disallowedChars);
+	const currentVersion = $derived(activeVendor?.version ?? sessionSettingsStore.version);
+
+	async function updateSetting(field: 'length' | 'disallowedChars' | 'version', value: string | number) {
+		if (trustStore.trusted && activeVendor && passphraseStore.configKey) {
+			await configStore.updateVendorSettings(activeVendor.name, { [field]: value }, passphraseStore.configKey);
+		} else if (!trustStore.trusted) {
+			if (field === 'length') sessionSettingsStore.length = value as number;
+			else if (field === 'disallowedChars') sessionSettingsStore.disallowedChars = value as string;
+			else if (field === 'version') sessionSettingsStore.version = value as AlgorithmVersion;
+		}
 	}
 </script>
 
@@ -42,33 +51,18 @@
 
 	{#if expanded}
 		<div class="mt-[14px] p-4 bg-surface border border-border-soft rounded-[10px] flex flex-col gap-3">
-			<div class="grid grid-cols-2 gap-3">
-				<div class="flex flex-col gap-1.5">
-					<label class="text-xs font-bold text-ink-2" for="passwordLength">Length</label>
-					<input
-						id="passwordLength"
-						type="number"
-						min="8"
-						max="22"
-						value={activeVendor?.length ?? 16}
-						disabled={!activeVendor}
-						class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
-						onchange={(e) => updateSetting('length', parseInt((e.target as HTMLInputElement).value, 10))}
-					/>
-				</div>
-				<div class="flex flex-col gap-1.5">
-					<label class="text-xs font-bold text-ink-2" for="passwordCount">Count</label>
-					<input
-						id="passwordCount"
-						type="number"
-						min="1"
-						max="20"
-						value={activeVendor?.count ?? 5}
-						disabled={!activeVendor}
-						class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
-						onchange={(e) => updateSetting('count', parseInt((e.target as HTMLInputElement).value, 10))}
-					/>
-				</div>
+			<div class="flex flex-col gap-1.5">
+				<label class="text-xs font-bold text-ink-2" for="passwordLength">Length</label>
+				<input
+					id="passwordLength"
+					type="number"
+					min="8"
+					max="22"
+					value={currentLength}
+					disabled={isDisabled}
+					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
+					onchange={(e) => updateSetting('length', parseInt((e.target as HTMLInputElement).value, 10))}
+				/>
 			</div>
 
 			<div class="flex flex-col gap-1.5">
@@ -79,8 +73,8 @@
 					placeholder="Characters to exclude"
 					autocomplete="off"
 					spellcheck="false"
-					value={activeVendor?.disallowedChars ?? ''}
-					disabled={!activeVendor}
+					value={currentDisallowedChars}
+					disabled={isDisabled}
 					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 placeholder:text-muted placeholder:font-normal focus:border-accent focus:shadow-[0_0_0_3px_var(--accent-dim)] disabled:opacity-50 disabled:cursor-not-allowed"
 					oninput={(e) => updateSetting('disallowedChars', (e.target as HTMLInputElement).value)}
 				/>
@@ -90,8 +84,8 @@
 				<label class="text-xs font-bold text-ink-2" for="algorithmVersion">Algorithm</label>
 				<select
 					id="algorithmVersion"
-					disabled={!activeVendor}
-					value={activeVendor?.version ?? 'v1'}
+					disabled={isDisabled}
+					value={currentVersion}
 					class="w-full font-sans text-[14px] font-medium text-ink bg-surface border-[1.5px] border-border rounded-[9px] px-3 py-[9px] outline-none appearance-none transition-[border-color,box-shadow] duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
 					onchange={(e) => updateSetting('version', (e.target as HTMLSelectElement).value)}
 				>
