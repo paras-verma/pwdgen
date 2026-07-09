@@ -8,11 +8,11 @@ fileignoreconfig:
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
-  checksum: 5e337ae9ad71eb2e94fe77846875837ce5ba3ed0bc3084115bf685b43fa05a82
+  checksum: 64a60f6e11d481901a3f7ad3b74f609f8f34809abba580a45c3f056e3cd2e32c
 - filename: .gitignore
   checksum: 755de56b3622291b869eb30baddb3c5cef77936bd60d2f50e6d05b74d1258655
 - filename: .talismanrc
-  checksum: 0480daa0c9f4fe7d39bba000f2ddb05de2c99084ffa0b945dea79a6755e54e72
+  checksum: dd41944935a7f4863e4aa509cc3bf67ab0a12c2b30f8abdccc6143fd174c23d1
 - filename: svelte.config.js
   checksum: 57261cf5d47cb20d7ec0cb8184bfb8257f5a6bb0bd1b9a14d48fc5d7b69e309d
 - filename: tsconfig.cli.json

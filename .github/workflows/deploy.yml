@@ -52,8 +52,6 @@ jobs:
       - name: Bump version
         id: version
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           RAW=$(npm version ${{ steps.bump.outputs.type }} --no-git-tag-version)
           echo "tag=${RAW#v}" >> "$GITHUB_OUTPUT"
 
@@ -98,12 +96,28 @@ jobs:
         id: deploy
         uses: actions/deploy-pages@v5
 
-      - name: Commit, tag and push
+      - name: Commit version bump
+        id: commit
+        uses: planetscale/ghcommit-action@v0.2.22
+        with:
+          commit_message: "chore: release v${{ steps.version.outputs.tag }} [skip ci]"
+          repo: ${{ github.repository }}
+          branch: main
+          file_pattern: "package.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.tag }}
+          REPO: ${{ github.repository }}
+          COMMIT: ${{ steps.commit.outputs.commit-hash }}
         run: |
-          git add package.json
-          git commit -m "chore: release v${{ steps.version.outputs.tag }} [skip ci]"
-          git tag "v${{ steps.version.outputs.tag }}"
-          git push origin main --follow-tags
+          TAG_SHA=$(gh api /repos/$REPO/git/tags \
+            -f tag="v$VERSION" -f message="v$VERSION" \
+            -f object="$COMMIT" -f type=commit --jq '.sha')
+          gh api /repos/$REPO/git/refs -f ref="refs/tags/v$VERSION" -f sha="$TAG_SHA"
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
