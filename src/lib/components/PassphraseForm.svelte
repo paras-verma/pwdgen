@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	import zxcvbn from 'zxcvbn';
 	import { passphraseStore } from '$lib/stores/passphraseStore.svelte';
 
 	let passphraseVisible = $state(false);
@@ -10,6 +11,25 @@
 		passphraseStore.confirm.length > 0 &&
 		!passphraseStore.mismatch
 	);
+
+	const strength = $derived(
+		passphraseStore.passphrase.length > 0 ? zxcvbn(passphraseStore.passphrase) : null
+	);
+
+	const strengthScore = $derived(strength?.score ?? -1);
+
+	const strengthMeta = $derived.by(() => {
+		switch (strengthScore) {
+			case 0: return { label: 'Too weak', color: 'var(--red)', bars: 1 };
+			case 1: return { label: 'Weak', color: 'var(--red)', bars: 2 };
+			case 2: return { label: 'Fair', color: '#f59e0b', bars: 3 };
+			case 3: return { label: 'Strong', color: 'var(--green)', bars: 4 };
+			case 4: return { label: 'Very strong', color: 'var(--green)', bars: 5 };
+			default: return null;
+		}
+	});
+
+	const tooWeak = $derived(strengthScore >= 0 && strengthScore < 2);
 </script>
 
 <div class="flex flex-col gap-4">
@@ -37,6 +57,20 @@
 				{/if}
 			</button>
 		</div>
+
+		{#if strengthMeta}
+			<div transition:slide={{ duration: 150 }} class="flex items-center gap-2">
+				<div class="flex gap-[3px] flex-1">
+					{#each { length: 5 } as _, i}
+						<div
+							class="h-[3px] flex-1 rounded-full transition-[background] duration-200"
+							style="background: {i < strengthMeta.bars ? strengthMeta.color : 'var(--border)'}"
+						></div>
+					{/each}
+				</div>
+				<span class="text-[11px] font-semibold" style="color: {strengthMeta.color}">{strengthMeta.label}</span>
+			</div>
+		{/if}
 	</div>
 
 	{#if !passphraseStore.confirmed}
@@ -74,10 +108,10 @@
 			<button
 				type="button"
 				class="w-full font-sans text-[14px] font-bold text-white bg-accent border-none rounded-[10px] px-5 py-[11px] cursor-pointer transition-[background,opacity] duration-150 hover:not-disabled:bg-accent-hi disabled:opacity-50 disabled:cursor-default focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-[3px]"
-				disabled={!passphraseStore.passphrase || !passphraseStore.confirm || passphraseStore.mismatch || passphraseStore.isDerivingKey}
+				disabled={!passphraseStore.passphrase || !passphraseStore.confirm || passphraseStore.mismatch || passphraseStore.isDerivingKey || tooWeak}
 				onclick={passphraseStore.confirmPassphrase}
 			>
-				{passphraseStore.isDerivingKey ? 'Unlocking…' : 'Confirm passphrase'}
+				{passphraseStore.isDerivingKey ? 'Unlocking…' : tooWeak ? 'Passphrase too weak' : 'Confirm passphrase'}
 			</button>
 		</div>
 	{/if}

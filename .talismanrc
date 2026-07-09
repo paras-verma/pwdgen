@@ -4,7 +4,7 @@ fileignoreconfig:
 - filename: SECURITY.md
   checksum: 7fbdeae3391dc527b68f0d17a1e927de1aea4b3459c0ee3290051ebe9ac31c17
 - filename: pnpm-lock.yaml
-  checksum: 49472769274a6fc8618ea5def6bbcda1a284596d7a66855d7c95f9d9ee3d49e7
+  checksum: ffd5dc6ba387580dde05ed9262178c72e28d70ee48defb0536c8ade7428b05c2
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
@@ -44,7 +44,7 @@ fileignoreconfig:
 - filename: src/lib/components/EmptyState.svelte
   checksum: e3922e13fa8ee577ee1ef45dab2cc1b3827a650d1988648676b4012bc02f6215
 - filename: src/lib/components/PassphraseForm.svelte
-  checksum: e3483402994e4b8bcf75a458f38ba78d1cad94fa3edc81d0c4d95a928d24dc1b
+  checksum: 4efc88d29823e9d76a900ec0a5d937d8a207bcd9011e980b26bff39a8020a3bb
 - filename: src/lib/components/PasswordRow.svelte
   checksum: b339b56dc402c5f21681340ac5d73577996d4944b127b754cc6df5a3eb16b5fe
 - filename: src/lib/components/ResultsPanel.svelte
