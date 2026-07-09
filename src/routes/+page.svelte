@@ -17,6 +17,8 @@
 
 	const appVersion: string = import.meta.env.VITE_APP_VERSION;
 	const releaseUrl = `https://github.com/paras-verma/pwdgen/releases/tag/v${appVersion}`;
+	const attestationUrl: string = import.meta.env.VITE_ATTESTATION_URL;
+	const versionUrl = attestationUrl || releaseUrl;
 	const repoUrl = 'https://github.com/paras-verma/pwdgen';
 
 	let showInfo = $state(false);
@@ -118,11 +120,11 @@
 			</div>
 			<span class="font-mono text-[13px] font-semibold text-ink-2 tracking-[0.03em]">pwdgen</span>
 			<a
-				href={releaseUrl}
+				href={versionUrl}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="flex items-center gap-[5px] font-mono text-[11px] font-medium text-muted bg-surface-alt border border-border rounded-full px-[8px] py-[3px] leading-none transition-[color,border-color] duration-[120ms] hover:text-green hover:border-green"
-				title="Verified release v{appVersion}"
+				title="{attestationUrl ? 'View build attestation' : 'View release'} v{appVersion}"
 			>
 				<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
 				v{appVersion}

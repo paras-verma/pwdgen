@@ -66,6 +66,7 @@ jobs:
         run: pnpm run build:single
 
       - name: Attest artifact
+        id: attest
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: build/pwdgen.html
@@ -80,6 +81,12 @@ jobs:
           NAME="pwdgen-v${{ steps.version.outputs.tag }}.html"
           cp build/pwdgen.html "$NAME"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Rebuild Pages with attestation URL
+        run: pnpm run build
+        env:
+          VITE_APP_VERSION: ${{ steps.version.outputs.tag }}
+          VITE_ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
 
       - uses: actions/configure-pages@v5
 
