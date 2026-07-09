@@ -4,7 +4,7 @@ fileignoreconfig:
 - filename: SECURITY.md
   checksum: 7fbdeae3391dc527b68f0d17a1e927de1aea4b3459c0ee3290051ebe9ac31c17
 - filename: pnpm-lock.yaml
-  checksum: ffd5dc6ba387580dde05ed9262178c72e28d70ee48defb0536c8ade7428b05c2
+  checksum: a5242c168483951a244c6d4ec747bf11d1bbdd47be87596c42e28d797f71169c
 - filename: package.json
   checksum: 3d5dd58b16dad22e74d376fee867f5dc5aab1957a4fb595e689e57252a541fde
 - filename: .github/workflows/deploy.yml
@@ -58,11 +58,13 @@ fileignoreconfig:
 - filename: src/lib/crypto/configStorage.ts
   checksum: 8b51f41e85d1b222e26e1be1f544a1460e56696b00a9d5eb2f1a73da0230b9be
 - filename: src/lib/crypto/passwordDerivation.ts
-  checksum: 2c082b80ed4b6bae8cd8c9a19762b37101f43035b355884f3a4a3d2d60c4480b
+  checksum: c6e12c300243558fe2433867720b7c9e03b009c1465b0d3733fc1be2a93f1776
 - filename: src/lib/crypto/algo/shared.ts
   checksum: a2edf4954a69c75daf7ad1019cea5c50b5e72b68378ac0f7f4e853257c34a15b
 - filename: src/lib/crypto/algo/v1.ts
   checksum: 34189ab7391cc84c2e7fc949723c110de4b1c5aff3045991f58c13ec5b497ebe
+- filename: src/lib/crypto/algo/v3.ts
+  checksum: 0ecfeefae95d10eb51bdeae38247d7f27236d512cdd9f1cf4f2c27f92c1ef54b
 - filename: src/lib/crypto/algo/v2.ts
   checksum: 350333d31c32a04731f6d721b3ea9f0614c05c46fa89dfd64f2f4f3174020e51
 - filename: src/lib/crypto/algo/v1.test.ts

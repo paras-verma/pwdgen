@@ -39,7 +39,7 @@ export const DEFAULT_VENDOR_SETTINGS: VendorSettings = {
 	count: 5,
 	disallowedChars: '',
 	lastCopiedIndex: null,
-	version: 'v1'
+	version: 'v3'
 };
 
 export async function deriveConfigKey(passphrase: string): Promise<CryptoKey> {
@@ -99,7 +99,7 @@ async function decryptVendorSettings(
 				count: parsed.count,
 				disallowedChars: parsed.disallowedChars,
 				lastCopiedIndex: parsed.lastCopiedIndex ?? null,
-				version: parsed.version === 'v2' ? 'v2' : 'v1'
+				version: parsed.version === 'v3' ? 'v3' : parsed.version === 'v2' ? 'v2' : 'v1'
 			};
 		}
 		return null;
