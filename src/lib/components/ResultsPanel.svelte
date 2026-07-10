@@ -8,9 +8,10 @@
 		errorMessage: string | null;
 		lastCopiedIndex: number | null;
 		onCopy: (index: number) => void;
+		onLearnMore?: () => void;
 	}
 
-	let { passwords, isGenerating, errorMessage, lastCopiedIndex, onCopy }: Props = $props();
+	let { passwords, isGenerating, errorMessage, lastCopiedIndex, onCopy, onLearnMore }: Props = $props();
 </script>
 
 {#if errorMessage}
@@ -29,5 +30,5 @@
 		{/each}
 	</ul>
 {:else}
-	<EmptyState />
+	<EmptyState {onLearnMore} />
 {/if}

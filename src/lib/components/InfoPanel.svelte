@@ -1,6 +1,25 @@
+<script lang="ts">
+	interface Props {
+		onClose?: () => void;
+	}
+	let { onClose }: Props = $props();
+</script>
+
 <div class="px-11 py-10 max-[680px]:px-[22px] max-[680px]:py-7">
-	<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent mb-[10px]">About</p>
-	<h2 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-8 max-[680px]:text-[22px]">How pwdgen works</h2>
+	<div class="flex items-start justify-between mb-[10px]">
+		<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">About</p>
+		{#if onClose}
+			<button
+				type="button"
+				class="flex items-center justify-center w-[26px] h-[26px] text-muted border-[1.5px] border-border rounded-lg cursor-pointer transition-[color,border-color] duration-[120ms] hover:text-ink hover:border-ink-2 -mt-[2px]"
+				aria-label="Close"
+				onclick={onClose}
+			>
+				<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+			</button>
+		{/if}
+	</div>
+	<h2 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-8 max-[680px]:text-[22px]">Open, deterministic, verifiable.</h2>
 
 	<div class="flex flex-col gap-8">
 		<section>
@@ -11,34 +30,29 @@
 		</section>
 
 		<section>
-			<h3 class="text-[11px] font-mono font-semibold uppercase tracking-[0.12em] text-muted mb-3">Why deterministic</h3>
+			<h3 class="text-[11px] font-mono font-semibold uppercase tracking-[0.12em] text-muted mb-3">Under the hood</h3>
 			<p class="text-[13.5px] text-ink-2 leading-[1.7]">
-				The same inputs always produce the same outputs. If you remember your passphrase, you can always re-derive every password, even after losing your device. No backup needed. No single point of failure.
+				Your passphrase is stretched through a <strong class="text-ink font-semibold">memory-hard key derivation function</strong> to produce a cryptographic key. That key is then combined with the service name to derive your password.
+			</p>
+			<p class="text-[13.5px] text-ink-2 leading-[1.7] mt-3">
+				The same inputs always produce the same output - so there is nothing to store or sync. If you remember your passphrase, you can re-derive any password at any time, even after losing your device.
+			</p>
+			<p class="text-[13.5px] text-ink-2 leading-[1.7] mt-3">
+				The algorithm version can be changed in Advanced options; newer versions are more resistant to brute-force. Everything runs locally in your browser. Nothing is ever sent to a server.
 			</p>
 		</section>
 
 		<section>
-			<h3 class="text-[11px] font-mono font-semibold uppercase tracking-[0.12em] text-muted mb-3">How to use it</h3>
-			<ol class="flex flex-col gap-3 list-none">
-				<li class="flex gap-3">
-					<span class="font-mono text-[11px] font-semibold text-accent bg-accent-dim rounded-[5px] px-[7px] py-[3px] shrink-0 mt-[2px] h-fit">01</span>
-					<p class="text-[13.5px] text-ink-2 leading-[1.7]"><strong class="text-ink font-semibold">Choose a master passphrase.</strong> Pick a long, memorable phrase you will never forget. This is the only secret you need to protect.</p>
-				</li>
-				<li class="flex gap-3">
-					<span class="font-mono text-[11px] font-semibold text-accent bg-accent-dim rounded-[5px] px-[7px] py-[3px] shrink-0 mt-[2px] h-fit">02</span>
-					<p class="text-[13.5px] text-ink-2 leading-[1.7]"><strong class="text-ink font-semibold">Enter a service name.</strong> Type the name of the site or app (e.g. <em class="font-mono text-[12.5px] not-italic text-ink">github</em>). Each unique name yields a different password.</p>
-				</li>
-				<li class="flex gap-3">
-					<span class="font-mono text-[11px] font-semibold text-accent bg-accent-dim rounded-[5px] px-[7px] py-[3px] shrink-0 mt-[2px] h-fit">03</span>
-					<p class="text-[13.5px] text-ink-2 leading-[1.7]"><strong class="text-ink font-semibold">Generate and copy.</strong> Hit Generate, then copy the password you want. If you ever need it again, repeat the same inputs.</p>
-				</li>
-			</ol>
-		</section>
-
-		<section>
-			<h3 class="text-[11px] font-mono font-semibold uppercase tracking-[0.12em] text-muted mb-3">Under the hood</h3>
-			<p class="text-[13.5px] text-ink-2 leading-[1.7]">
-				Passwords are derived with <strong class="text-ink font-semibold">PBKDF2-SHA-512</strong> (100 000 iterations) and encrypted with <strong class="text-ink font-semibold">AES-256-CBC</strong>. Everything runs in your browser using the Web Crypto API. Nothing is ever sent to a server.
+			<h3 class="text-[11px] font-mono font-semibold uppercase tracking-[0.12em] text-muted mb-3">Trust</h3>
+			<p class="text-[13.5px] text-ink-2 leading-[1.7] mb-4">
+				What runs in your browser is verifiable against the public source - through a chain of a signed commit, a signed release tag, and a build attestation produced by GitHub Actions. The version badge above links to the attestation for this exact build.
+			</p>
+			<p class="text-[13.5px] text-ink-2 leading-[1.7] mb-3">
+				To verify yourself, download any JS bundle from this page and run:
+			</p>
+			<pre class="font-mono text-[11.5px] text-ink-2 bg-surface border border-border rounded-[9px] px-4 py-3 overflow-x-auto leading-[1.8]"><code>gh attestation verify &lt;file&gt; --repo paras-verma/pwdgen</code></pre>
+			<p class="text-[13px] text-muted leading-[1.7] mt-3">
+				This checks that the file was produced by the expected workflow from the exact source commit - not tampered with after the fact.
 			</p>
 		</section>
 

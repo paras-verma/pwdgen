@@ -207,13 +207,13 @@
 	{/if}
 
 	{#if showInfo}
-		<InfoPanel />
+		<InfoPanel onClose={() => (showInfo = false)} />
 	{:else}
 		<div class="grid [grid-template-columns:7fr_5fr] min-h-[520px] max-[680px]:grid-cols-1 max-[680px]:min-h-auto">
 			<section class="order-1 px-11 py-10 flex flex-col gap-0 border-r border-r-border max-[680px]:order-1 max-[680px]:px-[22px] max-[680px]:py-7 max-[680px]:border-r-0 max-[680px]:border-b max-[680px]:border-b-border">
 				<p class="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-accent mb-[10px]">Generator</p>
 				<h1 class="text-[27px] font-extrabold tracking-[-0.035em] leading-[1.1] text-ink text-balance mb-[10px] max-[680px]:text-[22px]">Derive passwords<br />from a passphrase</h1>
-				<p class="text-[13.5px] text-muted leading-[1.6] mb-7">Same inputs always produce the same passwords. Nothing is stored or sent anywhere.</p>
+				<p class="text-[13.5px] text-muted leading-[1.6] mb-7">Same inputs always produce the same passwords. Passwords are never stored or sent anywhere.</p>
 
 				<PassphraseForm />
 
@@ -268,6 +268,7 @@
 							errorMessage={generationError}
 							lastCopiedIndex={lastCopiedDisplayIndex}
 							onCopy={handleCopyAtIndex}
+							onLearnMore={() => (showInfo = true)}
 						/>
 					</div>
 

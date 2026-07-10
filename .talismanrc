@@ -22,15 +22,15 @@ fileignoreconfig:
 - filename: src/lib/components/DeleteVendorModal.svelte
   checksum: beeeeda75c20f70f266cd7e749dd262d61ba988058d3067024edfbbf9a7f1a5d
 - filename: src/lib/components/EmptyState.svelte
-  checksum: e3922e13fa8ee577ee1ef45dab2cc1b3827a650d1988648676b4012bc02f6215
+  checksum: ece7ee18b9b0e90508cc193d5a41c2a22e81c0abf86f10c3a9bbb5b1b1a4381b
 - filename: src/lib/components/InfoPanel.svelte
-  checksum: 83961219d88126b35ad8193b4dfc8b644c842d9f741f08dcefbcc574c5772a47
+  checksum: 3f425f433c60822c132647cda71bebbbda8a12c7fad43fc6c6e7e795800a4f40
 - filename: src/lib/components/PassphraseForm.svelte
   checksum: b9118ee503b6f7a4dfb00e2d39898aa985a41a9c06beddcbc66a7ec6b6362c07
 - filename: src/lib/components/PasswordRow.svelte
   checksum: b339b56dc402c5f21681340ac5d73577996d4944b127b754cc6df5a3eb16b5fe
 - filename: src/lib/components/ResultsPanel.svelte
-  checksum: cbb9cfa879c92e47c5a0910d85b70c772953137cb67a4c44de726bd015cf81c6
+  checksum: 8f90a511e27b9ab13302fd133ec126a9b5b706e7ecd3c8b3f6d00d9538086e63
 - filename: src/lib/components/ShareModal.svelte
   checksum: 574f807d18b181ec8996b928b53025ea25e7117b8719968f9437c20d7c17cf28
 - filename: src/lib/components/ThemeToggle.svelte
